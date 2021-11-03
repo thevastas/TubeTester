@@ -7,10 +7,28 @@
 #include <wx/textdlg.h>
 #include <wx/thread.h>
 #include <wx/utils.h>
-//#include "bmpfromocvpanel.h"
-//#include "convertmattowxbmp.h"
+#include "bmpfromocvpanel.h"
+#include "convertmattowxbmp.h"
 #include "buttonPanel.h"
 #include "MainWindow.h"
+#include <wx/popupwin.h>
+#include "ImageFrame.h"
+
+BEGIN_EVENT_TABLE(MainWindow, wxFrame)
+    EVT_BUTTON(controls::id::BRETRES, MainWindow::OpenResolutionImage)
+    EVT_BUTTON(controls::id::BRETDEF, MainWindow::OpenDefectsImage)
+    EVT_BUTTON(controls::id::BRETLAM1300, MainWindow::Open1300Image)
+    EVT_BUTTON(controls::id::BRETLAM1500, MainWindow::Open1500Image)
+    EVT_BUTTON(controls::id::BRETLAM1900, MainWindow::Open1900Image)
+    EVT_BUTTON(controls::id::BMEASRES, MainWindow::CaptureResolutionImage)
+    EVT_BUTTON(controls::id::BMEASDEF, MainWindow::CaptureDefectsImage)
+    EVT_BUTTON(controls::id::BMEASLAM1300, MainWindow::Capture1300Image)
+    EVT_BUTTON(controls::id::BMEASLAM1500, MainWindow::Capture1500Image)
+    EVT_BUTTON(controls::id::BMEASLAM1900, MainWindow::Capture1900Image)
+    EVT_BUTTON(controls::id::BIDMAN, MainWindow::SetManualID)
+    EVT_BUTTON(controls::id::BMEASLUM, MainWindow::SaveLuminance)
+    EVT_BUTTON(controls::id::BRETLUM, MainWindow::RetrieveLuminance)
+END_EVENT_TABLE()
 
 MainWindow::MainWindow(wxWindow* parent,
     wxWindowID id,
@@ -38,9 +56,11 @@ MainWindow::MainWindow(wxWindow* parent,
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
 
 
-    SetMinClientSize(FromDIP(wxSize(1000, 800)));
-    SetSize(FromDIP(wxSize(1000, 800)));
-
+    SetMinClientSize(FromDIP(wxSize(900, 1100)));
+    SetSize(FromDIP(wxSize(900, 1100)));
+    
+    
+    
 }
 
 
@@ -48,4 +68,142 @@ MainWindow::~MainWindow()
 {
 
 }
+
+void MainWindow::OpenResolutionImage(wxCommandEvent& event) {
+    m_imagemode = ResolutionImage;
+    m_resolutionWindow = new imageFrame(m_parent, "Saved Resolution image: "+ m_buttonPanel->m_idtext->GetLabel());
+    m_resolutionWindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_resolutionWindow->Show();
+}
+void MainWindow::OpenDefectsImage(wxCommandEvent& event) {
+    m_imagemode = DefectsImage;
+    m_defectsWindow = new imageFrame(m_parent, "Saved Defects image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_defectsWindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_defectsWindow->Show();
+}
+void MainWindow::Open1300Image(wxCommandEvent& event) {
+    m_imagemode = l1300Image;
+    m_1300Window = new imageFrame(m_parent, "Saved 1300 nm image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_1300Window->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_1300Window->Show();
+}
+void MainWindow::Open1500Image(wxCommandEvent& event) {
+    m_imagemode = l1500Image;
+    m_1500Window = new imageFrame(m_parent, "Saved 1500 nm Image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_1500Window->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_1500Window->Show();
+}
+void MainWindow::Open1900Image(wxCommandEvent& event) {
+    m_imagemode = l1900Image;
+    m_1900Window = new imageFrame(m_parent, "Saved 1900 nm Image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_1900Window->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    //m_1900Window->SetImage(m_buttonPanel->m_idtext->GetLabel() + ".jpg");
+    m_1900Window->Show();
+}
+
+void MainWindow::CaptureResolutionImage(wxCommandEvent& event) {
+    m_imagemode = ResolutionVideo;
+    m_capres = new imageFrame(m_parent, "Capturing resolution image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_capres->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_capres->OnIPCamera(event);
+    m_capres->Show();
+}
+
+void MainWindow::CaptureDefectsImage(wxCommandEvent& event) {
+    m_imagemode = DefectsVideo;
+    m_capdef = new imageFrame(m_parent, "Capturing defects image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_capdef->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_capdef->OnIPCamera(event);
+    m_capdef->Show();
+}
+
+void MainWindow::Capture1300Image(wxCommandEvent& event) {
+    m_imagemode = l1300Video;
+    m_cap1300 = new imageFrame(m_parent, "Capturing 1300 nm image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_cap1300->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_cap1300->OnIPCamera(event);
+    m_cap1300->Show();
+}
+
+void MainWindow::Capture1500Image(wxCommandEvent& event) {
+    m_imagemode = l1500Video;
+    m_cap1500 = new imageFrame(m_parent, "Capturing 1500 nm image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_cap1500->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_cap1500->OnIPCamera(event);
+    m_cap1500->Show();
+}
+
+void MainWindow::Capture1900Image(wxCommandEvent& event) {
+    m_imagemode = l1900Video;
+    m_cap1900 = new imageFrame(m_parent, "Capturing 1900 nm image: " + m_buttonPanel->m_idtext->GetLabel());
+    m_cap1900->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_cap1900->OnIPCamera(event);
+    m_cap1900->Show();
+}
+  
+void MainWindow::SaveLuminance(wxCommandEvent& event) {
+    m_imagemode = luminance;
+    wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/"; // move away to configs
+    wxString pathLuminance = directoryLuminance + m_buttonPanel->m_idtext->GetLabel()+".txt";
+    wxTextFile* luminanceFile = new wxTextFile(pathLuminance);
+    if (!wxFileExists(pathLuminance)) {
+        luminanceFile->Create();
+    }
+    luminanceFile->Open();
+    luminanceFile->AddLine("lum=" + m_buttonPanel->m_valuelum->GetValue());
+    luminanceFile->Write();
+    luminanceFile->Close();
+}
+
+void MainWindow::RetrieveLuminance(wxCommandEvent& event) {
+    m_imagemode = luminance;
+
+    wxString pathLuminance = directoryLuminance + m_buttonPanel->m_idtext->GetLabel()+".txt";
+    wxTextFile* luminanceFile = new wxTextFile(pathLuminance);
+    if (wxFileExists(pathLuminance)) {
+        luminanceFile->Open();
+        wxArrayString arrstr = wxSplit(luminanceFile->GetLastLine(), '=');
+        int cval = wxAtoi(arrstr[1]);
+        m_buttonPanel->m_valuelum->SetValue(wxString::Format(wxT("%i"), cval));
+        luminanceFile->Close();
+    }
+    else {
+        LOG(ERROR) << "Luminance file not found.";
+        wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
+    }
+}
+
+void  MainWindow::SetManualID(wxCommandEvent& event) {
+    m_buttonPanel->m_idtext->SetLabel(m_buttonPanel->m_idmantext->GetLineText(0));
+    if (!wxFileExists(directoryLuminance + m_buttonPanel->m_idtext->GetLabel() + ".txt")) {
+        m_buttonPanel->m_bretlum->Disable();
+    }
+    else m_buttonPanel->m_bretlum->Enable();
+
+    if (!wxFileExists(directoryres + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) { // TODO move to configs!!!
+        m_buttonPanel->m_bretres->Disable();
+    }
+    else m_buttonPanel->m_bretres->Enable();
+
+    if (!wxFileExists(directorydef + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
+        m_buttonPanel->m_bretdef->Disable();
+    }
+    else m_buttonPanel->m_bretdef->Enable();
+
+    if (!wxFileExists(directory1300 + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
+        m_buttonPanel->m_bretlam1300->Disable();
+    }
+    else m_buttonPanel->m_bretlam1300->Enable();
+
+    if (!wxFileExists(directory1500 + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
+        m_buttonPanel->m_bretlam1500->Disable();
+    }
+    else m_buttonPanel->m_bretlam1500->Enable();
+
+    if (!wxFileExists(directory1900 + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
+        m_buttonPanel->m_bretlam1900->Disable();
+    }
+    else m_buttonPanel->m_bretlam1900->Enable();
+}
+
 

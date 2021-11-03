@@ -26,4 +26,10 @@ public:
 	wxTextCtrl* m_valuelum;
 	wxButton* m_bretlum;
 	wxButton* m_bmeasdef;
+	wxButton* m_bmeaslam1300;
+	wxButton* m_bmeaslam1500;
+	wxButton* m_bmeaslam1900;
+	wxButton* m_bretlam1300;
+	wxButton* m_bretlam1500;
+	wxButton* m_bretlam1900;
 };

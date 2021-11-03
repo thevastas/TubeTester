@@ -1,7 +1,9 @@
+#define WIN32_LEAN_AND_MEAN
 #include "App.h"
+#include "id.h"
 #include "MainWindow.h"
 
-//INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 App::App()
 {

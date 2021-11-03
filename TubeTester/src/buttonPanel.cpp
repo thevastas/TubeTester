@@ -3,13 +3,13 @@
 #include "buttonPanel.h"
 
 buttonPanel::buttonPanel(wxPanel* parent)
-	: wxPanel(parent, -1, wxPoint(10, 10), wxSize(700, 600))
+	: wxPanel(parent, -1, wxPoint(10, 10), wxSize(800, 1000))
 {
 	int box = 10;
 	int boy = 10;
-	int bsp = 20;
+	int bsp = 30;
 	int bszx = 160;
-	int bszy = 40;
+	int bszy = 80;
 	m_parent = parent;
 
 	// First Row
@@ -35,6 +35,14 @@ buttonPanel::buttonPanel(wxPanel* parent)
 	m_bretlum = new wxButton(this, controls::id::BRETLUM, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 4 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Sixth Row
+	m_bmeaslam1300 = new wxButton(this, controls::id::BMEASLAM1300, "1300 nm", wxPoint(box, boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretlam1300 = new wxButton(this, controls::id::BRETLAM1300, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
 
+	// Seventh Row
+	m_bmeaslam1500 = new wxButton(this, controls::id::BMEASLAM1500, "1500 nm", wxPoint(box, boy + 6 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretlam1500 = new wxButton(this, controls::id::BRETLAM1500, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 6 * (bszy + bsp)), wxSize(bszx, bszy));
 
+	// Eighth Row
+	m_bmeaslam1900 = new wxButton(this, controls::id::BMEASLAM1900, "1900 nm", wxPoint(box, boy + 7 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretlam1900 = new wxButton(this, controls::id::BRETLAM1900, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 7 * (bszy + bsp)), wxSize(bszx, bszy));
 }
