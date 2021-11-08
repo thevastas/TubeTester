@@ -2,7 +2,7 @@
 #include "Common.h"
 #include "wx/artprov.h"
 #include "id.h"
-
+#include "config.h"
 #include <wx/stdpaths.h>
 #include <wx/config.h>
 #include <wx/confbase.h>
@@ -56,7 +56,7 @@ public:
     int frameoriginx = 1000;
     int frameoriginy = 100;
     int framesizex = 1067;
-    int framesizey = 800;
+    int framesizey = 900;
 
 
 
@@ -75,6 +75,7 @@ public:
     imageFrame* m_cap1300;
     imageFrame* m_cap1500;
     imageFrame* m_cap1900;
+    config* m_configwindow;
     void OpenResolutionImage(wxCommandEvent& event);
     void OpenDefectsImage(wxCommandEvent& event);
     void Open1300Image(wxCommandEvent& event);
@@ -88,6 +89,7 @@ public:
     void SetManualID(wxCommandEvent& event);
     void SaveLuminance(wxCommandEvent& event);
     void RetrieveLuminance(wxCommandEvent& event);
+    void OpenConfiguration(wxCommandEvent& event);
 
     wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/";  // TODO move away to configs
     wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/";
@@ -95,6 +97,7 @@ public:
     wxString directory1300 = "D:/ADOS-Tech/metrology - Documents/img/1300/";
     wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/";
     wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/";
+    int scalingFactor = 10000;
     //wxPopupWindow* aa;
     wxDECLARE_EVENT_TABLE();
 };

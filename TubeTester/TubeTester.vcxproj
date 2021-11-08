@@ -153,6 +153,7 @@
     <ClInclude Include="src\bmpfromocvpanel.h" />
     <ClInclude Include="src\buttonPanel.h" />
     <ClInclude Include="src\Common.h" />
+    <ClInclude Include="src\config.h" />
     <ClInclude Include="src\convertmattowxbmp.h" />
     <ClInclude Include="src\easylogging.h" />
     <ClInclude Include="src\id.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\bmpfromocvpanelcpp.cpp" />
     <ClCompile Include="src\buttonPanel.cpp" />
+    <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\convertmattowxbmp.cpp" />
     <ClCompile Include="src\easylogging.cpp" />
     <ClCompile Include="src\imageFrame.cpp" />

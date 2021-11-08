@@ -15,19 +15,20 @@
 #include "ImageFrame.h"
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
-    EVT_BUTTON(controls::id::BRETRES, MainWindow::OpenResolutionImage)
-    EVT_BUTTON(controls::id::BRETDEF, MainWindow::OpenDefectsImage)
-    EVT_BUTTON(controls::id::BRETLAM1300, MainWindow::Open1300Image)
-    EVT_BUTTON(controls::id::BRETLAM1500, MainWindow::Open1500Image)
-    EVT_BUTTON(controls::id::BRETLAM1900, MainWindow::Open1900Image)
-    EVT_BUTTON(controls::id::BMEASRES, MainWindow::CaptureResolutionImage)
-    EVT_BUTTON(controls::id::BMEASDEF, MainWindow::CaptureDefectsImage)
-    EVT_BUTTON(controls::id::BMEASLAM1300, MainWindow::Capture1300Image)
-    EVT_BUTTON(controls::id::BMEASLAM1500, MainWindow::Capture1500Image)
-    EVT_BUTTON(controls::id::BMEASLAM1900, MainWindow::Capture1900Image)
-    EVT_BUTTON(controls::id::BIDMAN, MainWindow::SetManualID)
-    EVT_BUTTON(controls::id::BMEASLUM, MainWindow::SaveLuminance)
-    EVT_BUTTON(controls::id::BRETLUM, MainWindow::RetrieveLuminance)
+    EVT_BUTTON(controls::id::BRETRES,       MainWindow::OpenResolutionImage)
+    EVT_BUTTON(controls::id::BRETDEF,       MainWindow::OpenDefectsImage)
+    EVT_BUTTON(controls::id::BRETLAM1300,   MainWindow::Open1300Image)
+    EVT_BUTTON(controls::id::BRETLAM1500,   MainWindow::Open1500Image)
+    EVT_BUTTON(controls::id::BRETLAM1900,   MainWindow::Open1900Image)
+    EVT_BUTTON(controls::id::BMEASRES,      MainWindow::CaptureResolutionImage)
+    EVT_BUTTON(controls::id::BMEASDEF,      MainWindow::CaptureDefectsImage)
+    EVT_BUTTON(controls::id::BMEASLAM1300,  MainWindow::Capture1300Image)
+    EVT_BUTTON(controls::id::BMEASLAM1500,  MainWindow::Capture1500Image)
+    EVT_BUTTON(controls::id::BMEASLAM1900,  MainWindow::Capture1900Image)
+    EVT_BUTTON(controls::id::BIDMAN,        MainWindow::SetManualID)
+    EVT_BUTTON(controls::id::BMEASLUM,      MainWindow::SaveLuminance)
+    EVT_BUTTON(controls::id::BRETLUM,       MainWindow::RetrieveLuminance)
+    EVT_BUTTON(controls::id::BCONFIG,       MainWindow::OpenConfiguration)
 END_EVENT_TABLE()
 
 MainWindow::MainWindow(wxWindow* parent,
@@ -56,8 +57,8 @@ MainWindow::MainWindow(wxWindow* parent,
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
 
 
-    SetMinClientSize(FromDIP(wxSize(900, 1100)));
-    SetSize(FromDIP(wxSize(900, 1100)));
+    SetMinClientSize(FromDIP(wxSize(580, 1000)));
+    SetSize(FromDIP(wxSize(580, 1000)));
     
     
     
@@ -97,7 +98,6 @@ void MainWindow::Open1900Image(wxCommandEvent& event) {
     m_imagemode = l1900Image;
     m_1900Window = new imageFrame(m_parent, "Saved 1900 nm Image: " + m_buttonPanel->m_idtext->GetLabel());
     m_1900Window->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
-    //m_1900Window->SetImage(m_buttonPanel->m_idtext->GetLabel() + ".jpg");
     m_1900Window->Show();
 }
 
@@ -206,4 +206,8 @@ void  MainWindow::SetManualID(wxCommandEvent& event) {
     else m_buttonPanel->m_bretlam1900->Enable();
 }
 
-
+void MainWindow::OpenConfiguration(wxCommandEvent& event) {
+    m_configwindow = new config(m_parent, "Configuration");
+    m_configwindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_configwindow->Show();
+}

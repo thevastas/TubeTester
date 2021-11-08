@@ -11,6 +11,7 @@
 #define BMPFROMOCVPANEL_H
 
 #include <wx/wx.h>
+#include <wx/print.h>
 #include <wx/scrolwin.h>
 //#include "MainWindow.h"
 

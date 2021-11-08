@@ -19,6 +19,12 @@ public:
 	wxButton* m_bscanid;
 
 	wxStaticText* m_measuretext;
+
+	wxButton* m_bbatchman;
+	wxTextCtrl* m_batchmantext;
+	wxButton* m_bconfig;
+	wxStaticText* m_batchtext;
+
 	wxButton* m_bmeasres;
 	wxButton* m_bretres;
 	wxButton* m_bretdef;

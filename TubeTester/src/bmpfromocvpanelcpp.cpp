@@ -19,15 +19,13 @@ wxBitmapFromOpenCVPanel::wxBitmapFromOpenCVPanel(wxFrame* parent)
     : wxScrolledCanvas(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
 {
     m_parent = parent;
-    m_overlayTextColour = *wxGREEN;
-    m_overlayFont = GetFont();
+    //m_overlayTextColour = *wxGREEN; 
+    //m_overlayFont = GetFont();
 
     SetBackgroundColour(*wxBLACK);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
 
     SetScrollRate(FromDIP(8), FromDIP(8));
-    // We need to do this to prevent drawing artefacts
-    // due to the info "overlay" which does not scroll with the bitmap.
     EnableScrolling(false, false);
 
     Bind(wxEVT_PAINT, &wxBitmapFromOpenCVPanel::OnPaint, this);
@@ -58,7 +56,6 @@ bool wxBitmapFromOpenCVPanel::SetBitmap(const wxBitmap& bitmap, const long timeG
     m_timeConvertBitmap = timeConvert;
 
     Refresh(); Update();
-    //if (timeConvert < 30) Sleep(30 - timeConvert);
     return true;
 }
 
@@ -175,39 +172,34 @@ void wxBitmapFromOpenCVPanel::OnPaint(wxPaintEvent&)
 
         dc.DrawRectangle(r);
     }
-
-    // Draw info "overlay", always at the top left corner of the window
-    // regardless of how the bitmap is scrolled.
+ 
     const long            drawTime = stopWatch.Time();
     wxDCTextColourChanger textColourChanger(dc, m_overlayTextColour);
     wxDCFontChanger       fontChanger(dc, m_overlayFont);
 
-    //dc.DrawText(wxString::Format("GetCVBitmap: %ld ms\nConvertCVtoWXBitmap: %ld ms\nDrawWXBitmap: %ld ms\n",
-    //    m_timeGetCVBitmap, m_timeConvertBitmap, drawTime),
-    //    offset);
 }
 
 
-void wxBitmapFromOpenCVPanel::OnChangeOverlayTextColour(wxMouseEvent&)
-{
-    const wxColour colour = wxGetColourFromUser(this, m_overlayTextColour,
-        "Color for text overlay");
-
-    if (!colour.IsOk())
-        return;
-
-    m_overlayTextColour = colour;
-    Refresh(); Update();
-}
-
-void wxBitmapFromOpenCVPanel::OnChangeOverlayFont(wxMouseEvent&)
-{
-    const wxFont font = wxGetFontFromUser(this, m_overlayFont,
-        "Font for text overlay");
-
-    if (!font.IsOk())
-        return;
-
-    m_overlayFont = font;
-    Refresh(); Update();
-}
+//void wxBitmapFromOpenCVPanel::OnChangeOverlayTextColour(wxMouseEvent&)
+//{
+//    const wxColour colour = wxGetColourFromUser(this, m_overlayTextColour,
+//        "Color for text overlay");
+//
+//    if (!colour.IsOk())
+//        return;
+//
+//    m_overlayTextColour = colour;
+//    Refresh(); Update();
+//}
+//
+//void wxBitmapFromOpenCVPanel::OnChangeOverlayFont(wxMouseEvent&)
+//{
+//    const wxFont font = wxGetFontFromUser(this, m_overlayFont,
+//        "Font for text overlay");
+//
+//    if (!font.IsOk())
+//        return;
+//
+//    m_overlayFont = font;
+//    Refresh(); Update();
+//}
