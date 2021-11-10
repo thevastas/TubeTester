@@ -1,5 +1,6 @@
 #include "config.h"
 #include "MainWindow.h"
+//#include "buttonPanel.h"
 BEGIN_EVENT_TABLE(config, wxFrame)
 EVT_BUTTON(controls::id::BCONFIGCLOSE, config::Close)
 EVT_BUTTON(controls::id::BCONFIGSAVE, config::Save)
@@ -10,6 +11,9 @@ config::config(wxPanel* parent, wxString title)
 {
 	//SetBackgroundColour(wxColor(32, 32, 32));
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+
+	myParent->m_buttonPanel->m_bconfig->Disable();
+
 	wxSizer* mainsizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer* saveclosesizer = new wxBoxSizer(wxHORIZONTAL);
 	//m_pathsbox = new wxStaticBox(this, controls::id::PATHBOX, "Paths");
@@ -71,6 +75,8 @@ config::config(wxPanel* parent, wxString title)
 	}
 
 void config::Close(wxCommandEvent& event) {
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	myParent->m_buttonPanel->m_bconfig->Enable();
 	Destroy();
 }
 
