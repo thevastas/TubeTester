@@ -14,13 +14,11 @@
 
 #include "bmpfromocvpanel.h"
 
-//wxBitmapFromOpenCVPanel::wxBitmapFromOpenCVPanel(wxWindow* parent)
+
 wxBitmapFromOpenCVPanel::wxBitmapFromOpenCVPanel(wxFrame* parent)
     : wxScrolledCanvas(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
 {
     m_parent = parent;
-    //m_overlayTextColour = *wxGREEN; 
-    //m_overlayFont = GetFont();
 
     SetBackgroundColour(*wxBLACK);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -29,9 +27,6 @@ wxBitmapFromOpenCVPanel::wxBitmapFromOpenCVPanel(wxFrame* parent)
     EnableScrolling(false, false);
 
     Bind(wxEVT_PAINT, &wxBitmapFromOpenCVPanel::OnPaint, this);
-
-    //Bind(wxEVT_LEFT_DCLICK, &wxBitmapFromOpenCVPanel::OnChangeOverlayTextColour, this);
-    //Bind(wxEVT_RIGHT_DCLICK, &wxBitmapFromOpenCVPanel::OnChangeOverlayFont, this);
 }
 
 bool wxBitmapFromOpenCVPanel::SetBitmap(const wxBitmap& bitmap, const long timeGet, const long timeConvert)
@@ -133,11 +128,6 @@ void wxBitmapFromOpenCVPanel::OnPaint(wxPaintEvent&)
         dc.SetUserScale(fHScale, fWScale);
 
 
-
-
-
-
-
     dc.DrawBitmap(m_bitmap, 0, 0, false);
 
     GetScrollPixelsPerUnit(&pixelsPerUnitX, &pixelsPerUnitY);
@@ -172,34 +162,5 @@ void wxBitmapFromOpenCVPanel::OnPaint(wxPaintEvent&)
 
         dc.DrawRectangle(r);
     }
- 
-    const long            drawTime = stopWatch.Time();
-    wxDCTextColourChanger textColourChanger(dc, m_overlayTextColour);
-    wxDCFontChanger       fontChanger(dc, m_overlayFont);
 
 }
-
-
-//void wxBitmapFromOpenCVPanel::OnChangeOverlayTextColour(wxMouseEvent&)
-//{
-//    const wxColour colour = wxGetColourFromUser(this, m_overlayTextColour,
-//        "Color for text overlay");
-//
-//    if (!colour.IsOk())
-//        return;
-//
-//    m_overlayTextColour = colour;
-//    Refresh(); Update();
-//}
-//
-//void wxBitmapFromOpenCVPanel::OnChangeOverlayFont(wxMouseEvent&)
-//{
-//    const wxFont font = wxGetFontFromUser(this, m_overlayFont,
-//        "Font for text overlay");
-//
-//    if (!font.IsOk())
-//        return;
-//
-//    m_overlayFont = font;
-//    Refresh(); Update();
-//}

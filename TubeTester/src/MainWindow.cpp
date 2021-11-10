@@ -47,42 +47,42 @@ MainWindow::MainWindow(wxWindow* parent,
 
 
     wxFileName f(wxStandardPaths::Get().GetExecutablePath());
-    wxString appPath(f.GetPath() + _T("\\config.ini"));
+    appPath=(f.GetPath() + _T("\\config.ini"));
 
-    //m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, wxPathOnly(wxStandardPaths::Get().GetExecutablePath()));
     m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
 
-    //m_configfile->SetPath(appPath);
-    m_configfile->SetPath("/paths");
 
-    //m_configfile->Write("defectspath", "aaa");
-    m_configfile->Read("defectspath", &directorydef);
-    m_configfile->Read("resolutionpath", &directoryres);
-    m_configfile->Read("luminancepath", &directoryLuminance);
-    m_configfile->Read("lamba1300path", &directory1300);
-    m_configfile->Read("lamba1500path", &directory1500);
-    m_configfile->Read("lamba1900path", &directory1900);
+    if (wxFileExists(appPath)) {
+        m_configfile->SetPath("/paths");
 
-    m_configfile->SetPath("/evaluation");
-    m_configfile->Read("scalingfactor", &scalingFactor);
-    //m_configfile->Flush();//Force save data in .ini file
+            m_configfile->Read("defectspath", &directorydef);
+            m_configfile->Read("resolutionpath", &directoryres);
+            m_configfile->Read("luminancepath", &directoryLuminance);
+            m_configfile->Read("lamba1300path", &directory1300);
+            m_configfile->Read("lamba1500path", &directory1500);
+            m_configfile->Read("lamba1900path", &directory1900);
+
+            m_configfile->SetPath("/evaluation");
+            m_configfile->Read("scalingfactor", &scalingFactor);
+
+    }
+    else {
+        LOG(ERROR) << "File does not exist for writing:" << appPath;
+        wxMessageBox(wxT("The configuration file does not exist:") + appPath, wxT("Warning"), wxICON_WARNING);
+    }
+
+
 
     //main panel
     m_parent = new wxPanel(this, wxID_ANY);
-
     SetBackgroundColour(wxColor(32, 32, 32));
-    //wxMenuBar* menuBar = new wxMenuBar();
-
 
     m_buttonPanel = new buttonPanel(m_parent);
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
 
-
-
     SetMinClientSize(FromDIP(wxSize(580, 1000)));
     SetSize(FromDIP(wxSize(580, 1000)));
-    
-    
+       
     
 }
 
@@ -202,7 +202,7 @@ void  MainWindow::SetManualID(wxCommandEvent& event) {
     }
     else m_buttonPanel->m_bretlum->Enable();
 
-    if (!wxFileExists(directoryres + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) { // TODO move to configs!!!
+    if (!wxFileExists(directoryres + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
         m_buttonPanel->m_bretres->Disable();
     }
     else m_buttonPanel->m_bretres->Enable();

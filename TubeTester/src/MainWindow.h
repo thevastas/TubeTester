@@ -94,6 +94,8 @@ public:
     void RetrieveLuminance(wxCommandEvent& event);
     void OpenConfiguration(wxCommandEvent& event);
 
+    wxString appPath;
+
     wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/";  // TODO move away to configs
     wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/";
     wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/";
@@ -101,7 +103,6 @@ public:
     wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/";
     wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/";
     int scalingFactor = 10000;
-    //wxPopupWindow* aa;
     wxDECLARE_EVENT_TABLE();
 };
 

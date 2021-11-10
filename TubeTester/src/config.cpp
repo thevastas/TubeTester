@@ -67,50 +67,28 @@ config::config(wxPanel* parent, wxString title)
 	mainsizer->Add(sizersettings);
 	mainsizer->Add(saveclosesizer);
 	
-	//this->SetSize(500,500);
 	this->SetSizer(mainsizer);
-	//this->Layout();
-	//this->Center(wxBOTH);
-	//mainsizer->SetSizeHints(this);
-	
-	//wxSizer* sizerButtons = new wxBoxSizer(wxHORIZONTAL);
-	//wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	//sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
-	//sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
-	//sizer->Add(sizerButtons);
-	//sizer->Add(m_bitmapPanel, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
-	//this->SetSizer(sizer);
-	//this->Layout();
-	//this->Center(wxBOTH);
-
-	
-	/*
-	wxFileName f(wxStandardPaths::Get().GetExecutablePath());
-	wxString appPath(f.GetPath() + _T("\\config.ini"));
-
-	//m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, wxPathOnly(wxStandardPaths::Get().GetExecutablePath()));
-	wxFileConfig* m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
-
-	//m_configfile->SetPath(appPath);
-	m_configfile->SetPath("/paths");
-	*/
-
-}
+	}
 
 void config::Close(wxCommandEvent& event) {
 	Destroy();
 }
 
 void config::Save(wxCommandEvent& event) {
+	
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
-	myParent->m_configfile->SetPath("/paths");
-	myParent->m_configfile->Write("defectspath", m_pathresolution->GetValue());
-	myParent->m_configfile->Write("resolutionpath", m_pathdefects->GetValue());
-	myParent->m_configfile->Write("luminancepath", m_pathlum->GetValue());
-	myParent->m_configfile->Write("lambda1300path", m_pathlambda1300->GetValue());
-	myParent->m_configfile->Write("lambda1500path", m_pathlambda1500->GetValue());
-	myParent->m_configfile->Write("lambda1900path", m_pathlambda1900->GetValue());
-	myParent->m_configfile->SetPath("/evaluation");
-	myParent->m_configfile->Write("scalingfactor", m_scalingfactor->GetValue());
-	myParent->m_configfile->Flush();
+
+		myParent->m_configfile->SetPath("/paths");
+		myParent->m_configfile->Write("defectspath", m_pathresolution->GetValue());
+		myParent->m_configfile->Write("resolutionpath", m_pathdefects->GetValue());
+		myParent->m_configfile->Write("luminancepath", m_pathlum->GetValue());
+		myParent->m_configfile->Write("lambda1300path", m_pathlambda1300->GetValue());
+		myParent->m_configfile->Write("lambda1500path", m_pathlambda1500->GetValue());
+		myParent->m_configfile->Write("lambda1900path", m_pathlambda1900->GetValue());
+		myParent->m_configfile->SetPath("/evaluation");
+		myParent->m_configfile->Write("scalingfactor", m_scalingfactor->GetValue());
+		myParent->m_configfile->Flush();
+		wxMessageBox(wxT("Settings saved to: ")+ myParent->appPath, wxT("Warning"), wxICON_WARNING);
+	
+
 }
