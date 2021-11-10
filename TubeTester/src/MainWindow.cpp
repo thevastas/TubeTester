@@ -46,6 +46,27 @@ MainWindow::MainWindow(wxWindow* parent,
     cv::setBreakOnError(true);
 
 
+    wxFileName f(wxStandardPaths::Get().GetExecutablePath());
+    wxString appPath(f.GetPath() + _T("\\config.ini"));
+
+    //m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, wxPathOnly(wxStandardPaths::Get().GetExecutablePath()));
+    m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+
+    //m_configfile->SetPath(appPath);
+    m_configfile->SetPath("/paths");
+
+    //m_configfile->Write("defectspath", "aaa");
+    m_configfile->Read("defectspath", &directorydef);
+    m_configfile->Read("resolutionpath", &directoryres);
+    m_configfile->Read("luminancepath", &directoryLuminance);
+    m_configfile->Read("lamba1300path", &directory1300);
+    m_configfile->Read("lamba1500path", &directory1500);
+    m_configfile->Read("lamba1900path", &directory1900);
+
+    m_configfile->SetPath("/evaluation");
+    m_configfile->Read("scalingfactor", &scalingFactor);
+    //m_configfile->Flush();//Force save data in .ini file
+
     //main panel
     m_parent = new wxPanel(this, wxID_ANY);
 
@@ -55,6 +76,7 @@ MainWindow::MainWindow(wxWindow* parent,
 
     m_buttonPanel = new buttonPanel(m_parent);
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
+
 
 
     SetMinClientSize(FromDIP(wxSize(580, 1000)));

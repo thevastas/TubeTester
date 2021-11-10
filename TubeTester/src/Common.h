@@ -27,3 +27,7 @@
 #include <cstdio>
 #include <iomanip>
 #include <ctime>
+#include <wx/stdpaths.h>
+#include <wx/config.h>
+#include <wx/confbase.h>
+#include <wx/fileconf.h>

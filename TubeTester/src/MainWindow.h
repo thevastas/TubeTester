@@ -76,6 +76,9 @@ public:
     imageFrame* m_cap1500;
     imageFrame* m_cap1900;
     config* m_configwindow;
+
+    wxFileConfig* m_configfile;
+
     void OpenResolutionImage(wxCommandEvent& event);
     void OpenDefectsImage(wxCommandEvent& event);
     void Open1300Image(wxCommandEvent& event);
