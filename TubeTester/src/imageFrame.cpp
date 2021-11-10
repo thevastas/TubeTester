@@ -200,11 +200,6 @@ wxBitmap imageFrame::ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConv
 
 void imageFrame::SetImage(wxString id)
 {
-	
-	//if (myParent->m_imagemode == myParent->ResolutionImage);
-
-
-
 
 	wxString path = m_directory + id + ".jpg";
 	long timeConvert = 0;
@@ -217,6 +212,7 @@ void imageFrame::SetImage(wxString id)
 	cap.convertTo(m_ocvmat, CV_8UC3);
 	wxBitmap bitmap = ConvertMatToBitmap(m_ocvmat, timeConvert);
 	if (bitmap.IsOk()) {
+		LOG(INFO) << "Opened file:" << path;
 		m_bitmapPanel->SetBitmap(wxBitmap(), 0, 0);
 		m_bitmapPanel->SetBitmap(bitmap, timeGet, timeConvert);
 	}
@@ -299,7 +295,7 @@ void imageFrame::OnIPCamera(wxCommandEvent& event)
 
 	if (StartIPCameraCapture())
 	{
-		LOG(ERROR) << "Camera capture started.";
+		LOG(INFO) << "Camera capture started.";
 		m_mode = IPCamera;
 	}
 	else Clear();
@@ -394,7 +390,7 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 		wxRenameFile(path, m_directory + ss.str() + myParent->m_buttonPanel->m_idtext->GetLabel() + ".jpg");
 	}
 	bitmap.SaveFile(path, wxBITMAP_TYPE_JPEG);
-	LOG(INFO) << "Snapshot saved.";
+	LOG(INFO) << "Snapshot saved at:" << path;
 
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionVideo:
