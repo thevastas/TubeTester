@@ -26,6 +26,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_BUTTON(controls::id::BMEASLAM1500,  MainWindow::Capture1500Image)
     EVT_BUTTON(controls::id::BMEASLAM1900,  MainWindow::Capture1900Image)
     EVT_BUTTON(controls::id::BIDMAN,        MainWindow::SetManualID)
+    EVT_BUTTON(controls::id::BBATCHMAN,     MainWindow::SetManualBatch)
     EVT_BUTTON(controls::id::BMEASLUM,      MainWindow::SaveLuminance)
     EVT_BUTTON(controls::id::BRETLUM,       MainWindow::RetrieveLuminance)
     EVT_BUTTON(controls::id::BCONFIG,       MainWindow::OpenConfiguration)
@@ -51,6 +52,11 @@ MainWindow::MainWindow(wxWindow* parent,
 
     m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
 
+    //main panel
+    m_parent = new wxPanel(this, wxID_ANY);
+    SetBackgroundColour(wxColor(32, 32, 32));
+
+
 
     if (wxFileExists(appPath)) {
         m_configfile->SetPath("/paths");
@@ -65,20 +71,19 @@ MainWindow::MainWindow(wxWindow* parent,
             m_configfile->SetPath("/evaluation");
             m_configfile->Read("scalingfactor", &scalingFactor);
 
+            m_configfile->SetPath("/misc");
+            m_configfile->Read("batch",&batchnumber);
+
     }
     else {
         LOG(ERROR) << "File does not exist for writing:" << appPath;
         wxMessageBox(wxT("The configuration file does not exist:") + appPath, wxT("Warning"), wxICON_WARNING);
     }
 
-
-
-    //main panel
-    m_parent = new wxPanel(this, wxID_ANY);
-    SetBackgroundColour(wxColor(32, 32, 32));
-
     m_buttonPanel = new buttonPanel(m_parent);
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
+
+
 
     SetMinClientSize(FromDIP(wxSize(580, 1000)));
     SetSize(FromDIP(wxSize(580, 1000)));
@@ -196,40 +201,57 @@ void MainWindow::RetrieveLuminance(wxCommandEvent& event) {
 }
 
 void  MainWindow::SetManualID(wxCommandEvent& event) {
+
     m_buttonPanel->m_idtext->SetLabel(m_buttonPanel->m_idmantext->GetLineText(0));
-    if (!wxFileExists(directoryLuminance + m_buttonPanel->m_idtext->GetLabel() + ".txt")) {
-        m_buttonPanel->m_bretlum->Disable();
-    }
-    else m_buttonPanel->m_bretlum->Enable();
-
-    if (!wxFileExists(directoryres + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
-        m_buttonPanel->m_bretres->Disable();
-    }
-    else m_buttonPanel->m_bretres->Enable();
-
-    if (!wxFileExists(directorydef + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
-        m_buttonPanel->m_bretdef->Disable();
-    }
-    else m_buttonPanel->m_bretdef->Enable();
-
-    if (!wxFileExists(directory1300 + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
-        m_buttonPanel->m_bretlam1300->Disable();
-    }
-    else m_buttonPanel->m_bretlam1300->Enable();
-
-    if (!wxFileExists(directory1500 + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
-        m_buttonPanel->m_bretlam1500->Disable();
-    }
-    else m_buttonPanel->m_bretlam1500->Enable();
-
-    if (!wxFileExists(directory1900 + m_buttonPanel->m_idtext->GetLabel() + ".jpg")) {
-        m_buttonPanel->m_bretlam1900->Disable();
-    }
-    else m_buttonPanel->m_bretlam1900->Enable();
+    UpdateButtons();
 }
 
 void MainWindow::OpenConfiguration(wxCommandEvent& event) {
     m_configwindow = new config(m_parent, "Configuration");
     m_configwindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
     m_configwindow->Show();
+}
+
+void MainWindow::SetManualBatch(wxCommandEvent& event) {
+    m_buttonPanel->m_batchtext->SetLabel(m_buttonPanel->m_batchmantext->GetValue());
+    batchnumber = wxAtoi(m_buttonPanel->m_batchmantext->GetValue());
+    UpdateButtons();
+}
+
+void MainWindow::UpdateButtons() {
+    MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+    lumfile = directoryLuminance + wxString::Format(wxT("%i/"), myParent->batchnumber) + m_buttonPanel->m_idtext->GetLabel() + ".txt";
+    resfile = directoryres + wxString::Format(wxT("%i/"), myParent->batchnumber) + m_buttonPanel->m_idtext->GetLabel() + ".jpg";
+    deffile = directorydef + wxString::Format(wxT("%i/"), myParent->batchnumber) + m_buttonPanel->m_idtext->GetLabel() + ".jpg";
+    l1300file = directory1300 + wxString::Format(wxT("%i/"), myParent->batchnumber) + m_buttonPanel->m_idtext->GetLabel() + ".jpg";
+    l1500file = directory1500 + wxString::Format(wxT("%i/"), myParent->batchnumber) + m_buttonPanel->m_idtext->GetLabel() + ".jpg";
+    l1900file = directory1900 + wxString::Format(wxT("%i/"), myParent->batchnumber) + m_buttonPanel->m_idtext->GetLabel() + ".jpg";
+    if (!wxFileExists(lumfile)) {
+        m_buttonPanel->m_bretlum->Disable();
+    }
+    else m_buttonPanel->m_bretlum->Enable();
+    if (!wxFileExists(resfile)) {
+        m_buttonPanel->m_bretres->Disable();
+    }
+    else m_buttonPanel->m_bretres->Enable();
+
+    if (!wxFileExists(deffile)) {
+        m_buttonPanel->m_bretdef->Disable();
+    }
+    else m_buttonPanel->m_bretdef->Enable();
+
+    if (!wxFileExists(l1300file)) {
+        m_buttonPanel->m_bretlam1300->Disable();
+    }
+    else m_buttonPanel->m_bretlam1300->Enable();
+
+    if (!wxFileExists(l1500file)) {
+        m_buttonPanel->m_bretlam1500->Disable();
+    }
+    else m_buttonPanel->m_bretlam1500->Enable();
+
+    if (!wxFileExists(l1900file)) {
+        m_buttonPanel->m_bretlam1900->Disable();
+    }
+    else m_buttonPanel->m_bretlam1900->Enable();
 }

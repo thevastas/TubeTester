@@ -93,6 +93,8 @@ public:
     void SaveLuminance(wxCommandEvent& event);
     void RetrieveLuminance(wxCommandEvent& event);
     void OpenConfiguration(wxCommandEvent& event);
+    void SetManualBatch(wxCommandEvent& event);
+    void UpdateButtons();
 
     wxString appPath;
 
@@ -102,6 +104,15 @@ public:
     wxString directory1300 = "D:/ADOS-Tech/metrology - Documents/img/1300/";
     wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/";
     wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/";
+
+    wxString lumfile;
+    wxString resfile;
+    wxString deffile;
+    wxString l1300file;
+    wxString l1500file;
+    wxString l1900file;
+
+    int batchnumber = 0;
     int scalingFactor = 10000;
     wxDECLARE_EVENT_TABLE();
 };

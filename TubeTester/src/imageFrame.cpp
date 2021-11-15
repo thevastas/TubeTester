@@ -121,27 +121,27 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionImage:
 		m_directory = directoryres;
-		SetImage(myParent -> m_buttonPanel->m_idtext->GetLabel()); 
+		SetImage(myParent -> resfile); 
 		m_bimagesave->Disable();
 		break;
 	case myParent->DefectsImage:
 		m_directory = directorydef;
-		SetImage(myParent->m_buttonPanel->m_idtext->GetLabel());
+		SetImage(myParent->deffile);
 		m_bimagesave->Disable();
 		break;
 	case myParent->l1300Image:
 		m_directory = directory1300;
-		SetImage(myParent->m_buttonPanel->m_idtext->GetLabel());
+		SetImage(myParent->l1300file);
 		m_bimagesave->Disable();
 		break;
 	case myParent->l1500Image:
 		m_directory = directory1500;
-		SetImage(myParent->m_buttonPanel->m_idtext->GetLabel());
+		SetImage(myParent->l1500file);
 		m_bimagesave->Disable();
 		break;
 	case myParent->l1900Image:
 		m_directory = directory1900;
-		SetImage(myParent->m_buttonPanel->m_idtext->GetLabel());
+		SetImage(myParent->l1300file);
 		m_bimagesave->Disable();
 		break;
 	case myParent->ResolutionVideo:
@@ -200,11 +200,12 @@ wxBitmap imageFrame::ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConv
 
 void imageFrame::SetImage(wxString id)
 {
-
-	wxString path = m_directory + id + ".jpg";
+	// warning add batch number
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	//wxString path = m_directory+"/"+ wxString::Format(wxT("%i"), myParent->batchnumber)+"/" + id + ".jpg";
 	long timeConvert = 0;
 	long timeGet = 0;
-	cap = cv::imread(path.ToStdString());
+	cap = cv::imread(id.ToStdString());
 	if (cap.empty()) {
 		wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
 		return;
@@ -212,7 +213,7 @@ void imageFrame::SetImage(wxString id)
 	cap.convertTo(m_ocvmat, CV_8UC3);
 	wxBitmap bitmap = ConvertMatToBitmap(m_ocvmat, timeConvert);
 	if (bitmap.IsOk()) {
-		LOG(INFO) << "Opened file:" << path;
+		LOG(INFO) << "Opened file:" << id;
 		m_bitmapPanel->SetBitmap(wxBitmap(), 0, 0);
 		m_bitmapPanel->SetBitmap(bitmap, timeGet, timeConvert);
 	}

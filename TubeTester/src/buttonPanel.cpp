@@ -5,13 +5,15 @@
 buttonPanel::buttonPanel(wxPanel* parent)
 	: wxPanel(parent, -1, wxPoint(10, 10), wxSize(560, 980))
 {
+
+	
 	int box = 10;
 	int boy = 10;
 	int bsp = 30;
 	int bszx = 160;
 	int bszy = 80;
 	m_parent = parent;
-
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	// First Row
 	
 	m_idmantext = new wxTextCtrl (this, controls::id::IDMANTEXT, "", wxPoint(box + 2*(bszx+bsp), boy), wxSize(bszx, bszy));
@@ -25,7 +27,7 @@ buttonPanel::buttonPanel(wxPanel* parent)
 
 	// Third Row
 	m_measuretext = new wxStaticText(this, controls::id::MEASURETEXT, "Measuring:", wxPoint(box, boy + 2 * (bszy + bsp) + bsp), wxSize(bszx, bszy), wxALIGN_CENTRE_HORIZONTAL);
-	m_batchtext = new wxStaticText(this, controls::id::BATCHTEXT, "Empty Batch", wxPoint(box + 1 * (bszx + bsp), boy + 2 * (bszy + bsp) + bsp), wxSize(bszx, bszy), wxALIGN_CENTRE_HORIZONTAL);
+	m_batchtext = new wxStaticText(this, controls::id::BATCHTEXT, wxString::Format(wxT("%i"), myParent->batchnumber), wxPoint(box + 1 * (bszx + bsp), boy + 2 * (bszy + bsp) + bsp), wxSize(bszx, bszy), wxALIGN_CENTRE_HORIZONTAL);
 	m_idtext = new wxStaticText(this, controls::id::IDTEXT, "Empty ID", wxPoint(box + 2 * (bszx + bsp), boy + 2 * (bszy + bsp) + bsp), wxSize(bszx, bszy), wxALIGN_CENTRE_HORIZONTAL);
 
 
