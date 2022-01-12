@@ -24,6 +24,8 @@ public:
 	void OnCameraFrame(wxThreadEvent& evt);
 	void OnCameraEmpty(wxThreadEvent&);
 	void OnCameraException(wxThreadEvent& evt);
+	float calcBlurriness(const cv::UMat& src, bool measuring_first_zone);
+
 	void Clear();
 	enum Mode 
 	{
@@ -35,16 +37,27 @@ public:
 	Mode                     m_mode{ Empty };
 
 	bool m_imagesaved;
+	bool m_calculateSharpness;
+	bool m_calculateSharpness2;
 
 	wxBitmapFromOpenCVPanel* m_bitmapPanel;
 	wxBitmap ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConvert);
 	void SetImage(wxString path);
 	void QuickSaveSnapshot(wxCommandEvent& event);
+	void OnCalculateSharpnessFirstZone(wxCommandEvent& event);
+	void OnCalculateSharpnessSecondZone(wxCommandEvent& event);
 	cv::Mat cap;
 	cv::UMat m_ocvmat;
+	cv::UMat dst;
+	long m_timeConvert=0;
+	float focusMeasure;
+	cv::Scalar mu, sigma;
+	std::stringstream socv;
 	wxPanel* m_parent;
 	wxButton* m_bimageclose;
 	wxButton* m_bimagesave;
+	wxButton* m_bcalculateSharpness;
+	float m_bluriness;
 	void CloseFrame(wxCommandEvent& event);
 	int framecounter;
 	wxString m_directory;

@@ -3,6 +3,8 @@
 BEGIN_EVENT_TABLE(imageFrame, wxFrame)
 EVT_BUTTON(controls::id::BIMAGECLOSE, imageFrame::CloseFrame)
 EVT_BUTTON(controls::id::BIMAGESAVE, imageFrame::QuickSaveSnapshot)
+EVT_BUTTON(controls::id::BMEASURESHARPNESS, imageFrame::OnCalculateSharpnessFirstZone)
+EVT_BUTTON(controls::id::BMEASURESHARPNESS2, imageFrame::OnCalculateSharpnessSecondZone)
 END_EVENT_TABLE()
 
 // A frame was retrieved from Camera.
@@ -99,7 +101,7 @@ wxThread::ExitCode CameraThread::Entry()
 imageFrame::imageFrame(wxPanel* parent, wxString title)
 	:wxFrame(parent, wxID_ANY, title, wxPoint(900,100), wxSize(700, 600))
 {
-	
+	m_mode = IPCamera;
 	wxImage::AddHandler(new wxJPEGHandler);
 	m_parent = parent;
 	//MainWindow* myParent = (MainWindow*)m_parent->GetParent();
@@ -107,10 +109,16 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	m_bitmapPanel = new wxBitmapFromOpenCVPanel(this);
 	m_bimageclose = new wxButton(this, controls::id::BIMAGECLOSE, "Close", wxPoint(0, 0), wxSize(300, 60));
 	m_bimagesave = new wxButton(this, controls::id::BIMAGESAVE, "Save", wxPoint(300, 0), wxSize(300, 60));
+
 	wxSizer* sizerButtons = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
 	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
+	if (m_mode == IPCamera) {
+		m_bcalculateSharpness = new wxButton(this, controls::id::BMEASURESHARPNESS, "Sharpness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bcalculateSharpness, 0, wxEXPAND | wxALL, 5);
+
+	}
 	sizer->Add(sizerButtons);
 	sizer->Add(m_bitmapPanel, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 	this->SetSizer(sizer);
@@ -262,11 +270,13 @@ bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 
 	// settings for the camera (resolution, framerate)
 	m_videoCapture = cap;
-	m_videoCapture->set(3, 2592);
-	m_videoCapture->set(4, 1944);
-	m_videoCapture->set(15, -5);
+	m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH, 2592);
+	m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 1944);
+	m_videoCapture->set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
+	m_videoCapture->set(cv::CAP_PROP_EXPOSURE, -5);
+	m_videoCapture->set(cv::CAP_PROP_FPS, 30);
 	//m_videoCapture->set(5, 30);
-	m_videoCapture->set(14, 3);
+	m_videoCapture->set(cv::CAP_PROP_GAIN, 3);
 
 	if (!StartIPCameraThread())
 
@@ -302,20 +312,64 @@ void imageFrame::OnIPCamera(wxCommandEvent& event)
 	else Clear();
 	Refresh();
 }
+
+
+float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
+{
+	cv::Mat Gx, Gy;
+	cv::UMat resized;
+	if (measuring_first_zone) {
+		src(cv::Range(1096, 822), cv::Range(1496, 1122)).copyTo(resized);
+		}
+	else {
+		resized = src;
+	}
+	cv::Sobel(resized, Gx, CV_32F, 1, 0);
+	cv::Sobel(resized, Gy, CV_32F, 0, 1);
+	double normGx = cv::norm(Gx);
+	double normGy = cv::norm(Gy);
+	double sumSq = normGx * normGx + normGy * normGy;
+	return static_cast<float>(1. / (sumSq / src.size().area() + 1e-6));
+}
+
+
 void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 {
+
+
+
 	CameraThread::CameraFrame* frame = evt.GetPayload<CameraThread::CameraFrame*>();
 	if (m_mode != IPCamera)
 	{
 		delete frame;
 		return;
 	}
-
-	long     timeConvert = 0;
+	//cv::Mat dst;
+	
+	//long     timeConvert = 0;
 	frame->matBitmap.copyTo(m_ocvmat);
+	//m_ocvmat.copyTo(dst);
+	//cv::Laplacian(m_ocvmat, dst, CV_64F);
+	//cv::meanStdDev(dst,mu,sigma);
+	//focusMeasure = calcBlurriness(m_ocvmat);
+	//if (m_mode == ) WARNING IF MEASURING RESOLUTION
 
-	if (m_imagesaved == true) {
-			cv::putText(m_ocvmat, "Image saved",cv::Point(100,100), cv::FONT_HERSHEY_PLAIN, 10, cv::Scalar(255,255,0),5);
+	if (m_calculateSharpness) {
+		cv::putText(m_ocvmat, cv::format("Sharpness: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 10, cv::Scalar(255, 255, 0), 5);
+		framecounter++;
+		if (framecounter > 8) {
+			framecounter = 0;
+			m_calculateSharpness = false;
+		}
+	}
+
+
+	
+	cv::rectangle(m_ocvmat, cv::Point(296, 222), cv::Point(2296, 1722), cv::Scalar(255,255,0), 5);
+	cv::rectangle(m_ocvmat, cv::Point(1096, 822), cv::Point(1496, 1122), cv::Scalar(0, 0, 255), 5);
+
+	if (m_imagesaved) {
+			cv::putText(m_ocvmat, "Image saved",cv::Point(100,100), cv::FONT_HERSHEY_PLAIN, 10, cv::Scalar(255,255,0),5); // WARNING ADD TEXTBOX
 			framecounter++;
 			if (framecounter > 10) {
 				framecounter = 0;
@@ -324,13 +378,14 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 	}; 
 
 
-	wxBitmap bitmap = ConvertMatToBitmap(m_ocvmat, timeConvert);
+
+	wxBitmap bitmap = ConvertMatToBitmap(m_ocvmat, m_timeConvert);
 
 
 
 
 	if (bitmap.IsOk())
-		m_bitmapPanel->SetBitmap(bitmap, frame->timeGet, timeConvert);
+		m_bitmapPanel->SetBitmap(bitmap, frame->timeGet, 0);
 	else
 		m_bitmapPanel->SetBitmap(wxBitmap(), 0, 0);
 
@@ -411,4 +466,18 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 		break;
 	}
 	m_imagesaved = true;
+}
+
+void imageFrame::OnCalculateSharpnessFirstZone(wxCommandEvent& event)
+{
+	bool measure_first_zone = true;
+	m_bluriness = calcBlurriness(m_ocvmat, measure_first_zone);
+	m_calculateSharpness = true;
+}
+
+void imageFrame::OnCalculateSharpnessSecondZone(wxCommandEvent& event)
+{
+	bool measure_first_zone = false;
+	m_bluriness = calcBlurriness(m_ocvmat, measure_first_zone);
+	m_calculateSharpness2 = true;
 }
