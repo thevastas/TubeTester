@@ -57,6 +57,7 @@ public:
 	wxButton* m_bimageclose;
 	wxButton* m_bimagesave;
 	wxButton* m_bcalculateSharpness;
+	wxButton* m_bcalculateSharpness2;
 	float m_bluriness;
 	void CloseFrame(wxCommandEvent& event);
 	int framecounter;

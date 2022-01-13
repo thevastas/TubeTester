@@ -101,9 +101,11 @@ wxThread::ExitCode CameraThread::Entry()
 imageFrame::imageFrame(wxPanel* parent, wxString title)
 	:wxFrame(parent, wxID_ANY, title, wxPoint(900,100), wxSize(700, 600))
 {
-	m_mode = IPCamera;
-	wxImage::AddHandler(new wxJPEGHandler);
 	m_parent = parent;
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	//m_mode = IPCamera;
+	wxImage::AddHandler(new wxJPEGHandler);
+	
 	//MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	//m_parent = this;
 	m_bitmapPanel = new wxBitmapFromOpenCVPanel(this);
@@ -114,10 +116,11 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
 	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
-	if (m_mode == IPCamera) {
+	if (myParent->m_imagemode == myParent->ResolutionVideo) {
 		m_bcalculateSharpness = new wxButton(this, controls::id::BMEASURESHARPNESS, "Sharpness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
 		sizerButtons->Add(m_bcalculateSharpness, 0, wxEXPAND | wxALL, 5);
-
+		m_bcalculateSharpness2 = new wxButton(this, controls::id::BMEASURESHARPNESS2, "Sharpness 2 Zone", wxPoint(600, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bcalculateSharpness2, 0, wxEXPAND | wxALL, 5);
 	}
 	sizer->Add(sizerButtons);
 	sizer->Add(m_bitmapPanel, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
@@ -125,7 +128,7 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	this->Layout();
 	this->Center(wxBOTH);
 
-	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	//MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionImage:
 		m_directory = directoryres;
@@ -252,7 +255,7 @@ bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 		wxWindowDisabler disabler;
 		wxBusyCursor     busyCursor;
 
-
+		// warning switch back to microscope camera ( 1 )
 		cap = new cv::VideoCapture(1, cv::CAP_ANY);
 
 	}
@@ -270,8 +273,11 @@ bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 
 	// settings for the camera (resolution, framerate)
 	m_videoCapture = cap;
+	// Warning change back for the microscope camera the below settings
 	m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH, 2592);
 	m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 1944);
+	//m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+	//m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 720);
 	m_videoCapture->set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
 	m_videoCapture->set(cv::CAP_PROP_EXPOSURE, -5);
 	m_videoCapture->set(cv::CAP_PROP_FPS, 30);
@@ -317,12 +323,12 @@ void imageFrame::OnIPCamera(wxCommandEvent& event)
 float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 {
 	cv::Mat Gx, Gy;
-	cv::UMat resized;
+	cv::Mat resized;
 	if (measuring_first_zone) {
-		src(cv::Range(1096, 822), cv::Range(1496, 1122)).copyTo(resized);
-		}
+		src(cv::Range(222, 1722), cv::Range(296, 2296)).copyTo(resized);
+	}
 	else {
-		resized = src;
+		src(cv::Range(822, 1122), cv::Range(1096, 1496)).copyTo(resized);
 	}
 	cv::Sobel(resized, Gx, CV_32F, 1, 0);
 	cv::Sobel(resized, Gy, CV_32F, 0, 1);
@@ -355,14 +361,21 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 	//if (m_mode == ) WARNING IF MEASURING RESOLUTION
 
 	if (m_calculateSharpness) {
-		cv::putText(m_ocvmat, cv::format("Sharpness: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 10, cv::Scalar(255, 255, 0), 5);
+		cv::putText(m_ocvmat, cv::format("Sharpness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
 			m_calculateSharpness = false;
 		}
 	}
-
+	else if (m_calculateSharpness2) {
+		cv::putText(m_ocvmat, cv::format("Sharpness Zone 2: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+		framecounter++;
+		if (framecounter > 8) {
+			framecounter = 0;
+			m_calculateSharpness2 = false;
+		}
+	}
 
 	
 	cv::rectangle(m_ocvmat, cv::Point(296, 222), cv::Point(2296, 1722), cv::Scalar(255,255,0), 5);
