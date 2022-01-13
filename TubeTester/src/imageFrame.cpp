@@ -116,7 +116,9 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
 	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
-	if (myParent->m_imagemode == myParent->ResolutionVideo) {
+
+	// warning remove resolutionimage inside if
+	if (myParent->m_imagemode == myParent->ResolutionVideo || myParent->m_imagemode == myParent->ResolutionImage) {
 		m_bcalculateSharpness = new wxButton(this, controls::id::BMEASURESHARPNESS, "Sharpness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
 		sizerButtons->Add(m_bcalculateSharpness, 0, wxEXPAND | wxALL, 5);
 		m_bcalculateSharpness2 = new wxButton(this, controls::id::BMEASURESHARPNESS2, "Sharpness 2 Zone", wxPoint(600, 0), wxSize(300, 60));
@@ -217,6 +219,15 @@ void imageFrame::SetImage(wxString id)
 	long timeConvert = 0;
 	long timeGet = 0;
 	cap = cv::imread(id.ToStdString());
+
+	// warning added rectangle
+	//cv::rectangle(cap, cv::Point(296, 222), cv::Point(2296, 1722), cv::Scalar(255, 255, 0), 5);
+	//cv::rectangle(cap, cv::Point(1096, 822), cv::Point(1496, 1122), cv::Scalar(0, 0, 255), 5);
+
+	cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
+	cv::rectangle(cap, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
+
+
 	if (cap.empty()) {
 		wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
 		return;
@@ -325,10 +336,12 @@ float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 	cv::Mat Gx, Gy;
 	cv::Mat resized;
 	if (measuring_first_zone) {
-		src(cv::Range(222, 1722), cv::Range(296, 2296)).copyTo(resized);
+		//src(cv::Range(222, 1722), cv::Range(296, 2296)).copyTo(resized);
+		src(cv::Range(222, 1722), cv::Range(446, 2146)).copyTo(resized);
 	}
 	else {
-		src(cv::Range(822, 1122), cv::Range(1096, 1496)).copyTo(resized);
+		//src(cv::Range(822, 1122), cv::Range(1096, 1496)).copyTo(resized);
+		src(cv::Range(822, 1122), cv::Range(1146, 1446)).copyTo(resized);
 	}
 	cv::Sobel(resized, Gx, CV_32F, 1, 0);
 	cv::Sobel(resized, Gy, CV_32F, 0, 1);
@@ -378,8 +391,8 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 	}
 
 	
-	cv::rectangle(m_ocvmat, cv::Point(296, 222), cv::Point(2296, 1722), cv::Scalar(255,255,0), 5);
-	cv::rectangle(m_ocvmat, cv::Point(1096, 822), cv::Point(1496, 1122), cv::Scalar(0, 0, 255), 5);
+	cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
+	cv::rectangle(cap, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
 
 	if (m_imagesaved) {
 			cv::putText(m_ocvmat, "Image saved",cv::Point(100,100), cv::FONT_HERSHEY_PLAIN, 10, cv::Scalar(255,255,0),5); // WARNING ADD TEXTBOX
