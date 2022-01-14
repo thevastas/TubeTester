@@ -224,9 +224,39 @@ void imageFrame::SetImage(wxString id)
 	//cv::rectangle(cap, cv::Point(296, 222), cv::Point(2296, 1722), cv::Scalar(255, 255, 0), 5);
 	//cv::rectangle(cap, cv::Point(1096, 822), cv::Point(1496, 1122), cv::Scalar(0, 0, 255), 5);
 
+
+
+
+	cv::UMat capumat;
+	cv::UMat capumat2;
+	cv::Mat cap2;
+	cv::Mat cap3;
+	cv::cvtColor(cap, cap2, cv::COLOR_BGR2GRAY);
+	//cv::Canny(cap2, cap3, 50, 100, false);
+
+
+
+	//int ddepth = CV_16S;
+	//cv::Mat grad_x, grad_y;
+	//cv::Mat abs_grad_x, abs_grad_y;
+	//cv::Mat grad;
+	//cv::Sobel(cap2, grad_x, ddepth, 1, 0, 1, 1, 0, cv::BORDER_DEFAULT);
+	//cv::Sobel(cap2, grad_y, ddepth, 0, 1, 1, 1, 0, cv::BORDER_DEFAULT);
+	//cv::convertScaleAbs(grad_x, abs_grad_x);
+	//cv::convertScaleAbs(grad_y, abs_grad_y);
+	//cv::addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
+	//cv::imshow("test", grad);
+
+	
+	cap2.copyTo(capumat);
+	//cv::Canny(cap, cap, 100, 200, 3, false);
 	cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
 	cv::rectangle(cap, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
-
+	cv::putText(cap, cv::format("Bluriness Zone 1: %E", calcBlurriness(capumat, true)), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
+	cv::putText(cap, cv::format("Bluriness Zone 2: %E", calcBlurriness(capumat, false)), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+	//capumat.copyTo(cap);
+	
+	
 
 	if (cap.empty()) {
 		wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
@@ -374,7 +404,7 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 	//if (m_mode == ) WARNING IF MEASURING RESOLUTION
 
 	if (m_calculateSharpness) {
-		cv::putText(m_ocvmat, cv::format("Sharpness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
+		cv::putText(m_ocvmat, cv::format("Bluriness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
@@ -382,7 +412,7 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 		}
 	}
 	else if (m_calculateSharpness2) {
-		cv::putText(m_ocvmat, cv::format("Sharpness Zone 2: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+		cv::putText(m_ocvmat, cv::format("Bluriness Zone 2: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
@@ -391,8 +421,8 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 	}
 
 	
-	cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
-	cv::rectangle(cap, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
+	cv::rectangle(m_ocvmat, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
+	cv::rectangle(m_ocvmat, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
 
 	if (m_imagesaved) {
 			cv::putText(m_ocvmat, "Image saved",cv::Point(100,100), cv::FONT_HERSHEY_PLAIN, 10, cv::Scalar(255,255,0),5); // WARNING ADD TEXTBOX
