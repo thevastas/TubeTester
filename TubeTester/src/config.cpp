@@ -85,8 +85,8 @@ void config::Save(wxCommandEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 
 		myParent->m_configfile->SetPath("/paths");
-		myParent->m_configfile->Write("defectspath", m_pathresolution->GetValue());
-		myParent->m_configfile->Write("resolutionpath", m_pathdefects->GetValue());
+		myParent->m_configfile->Write("defectspath", m_pathdefects->GetValue());
+		myParent->m_configfile->Write("resolutionpath", m_pathresolution->GetValue());
 		myParent->m_configfile->Write("luminancepath", m_pathlum->GetValue());
 		myParent->m_configfile->Write("lambda1300path", m_pathlambda1300->GetValue());
 		myParent->m_configfile->Write("lambda1500path", m_pathlambda1500->GetValue());
