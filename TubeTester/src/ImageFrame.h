@@ -25,6 +25,8 @@ public:
 	void OnCameraEmpty(wxThreadEvent&);
 	void OnCameraException(wxThreadEvent& evt);
 	float calcBlurriness(const cv::UMat& src, bool measuring_first_zone);
+	void OnSaveBluriness(wxCommandEvent& event);
+	void SaveBluriness();
 
 	void Clear();
 	enum Mode 
@@ -59,6 +61,7 @@ public:
 	wxButton* m_bcalculateSharpness;
 	wxButton* m_bcalculateSharpness2;
 	float m_bluriness;
+	float m_bluriness2;
 	void CloseFrame(wxCommandEvent& event);
 	int framecounter;
 	wxString m_directory;

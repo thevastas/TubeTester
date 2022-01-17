@@ -5,6 +5,7 @@ EVT_BUTTON(controls::id::BIMAGECLOSE, imageFrame::CloseFrame)
 EVT_BUTTON(controls::id::BIMAGESAVE, imageFrame::QuickSaveSnapshot)
 EVT_BUTTON(controls::id::BMEASURESHARPNESS, imageFrame::OnCalculateSharpnessFirstZone)
 EVT_BUTTON(controls::id::BMEASURESHARPNESS2, imageFrame::OnCalculateSharpnessSecondZone)
+EVT_BUTTON(controls::id::BSAVEBLURINESS, imageFrame::OnSaveBluriness)
 END_EVENT_TABLE()
 
 // A frame was retrieved from Camera.
@@ -103,11 +104,8 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 {
 	m_parent = parent;
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
-	//m_mode = IPCamera;
 	wxImage::AddHandler(new wxJPEGHandler);
-	
-	//MainWindow* myParent = (MainWindow*)m_parent->GetParent();
-	//m_parent = this;
+
 	m_bitmapPanel = new wxBitmapFromOpenCVPanel(this);
 	m_bimageclose = new wxButton(this, controls::id::BIMAGECLOSE, "Close", wxPoint(0, 0), wxSize(300, 60));
 	m_bimagesave = new wxButton(this, controls::id::BIMAGESAVE, "Save", wxPoint(300, 0), wxSize(300, 60));
@@ -117,12 +115,17 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
 	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
 
-	// warning remove resolutionimage inside if
-	if (myParent->m_imagemode == myParent->ResolutionVideo || myParent->m_imagemode == myParent->ResolutionImage) {
-		m_bcalculateSharpness = new wxButton(this, controls::id::BMEASURESHARPNESS, "Sharpness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
+	if (myParent->m_imagemode == myParent->ResolutionVideo) {
+		m_bcalculateSharpness = new wxButton(this, controls::id::BMEASURESHARPNESS, "Bluriness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
 		sizerButtons->Add(m_bcalculateSharpness, 0, wxEXPAND | wxALL, 5);
-		m_bcalculateSharpness2 = new wxButton(this, controls::id::BMEASURESHARPNESS2, "Sharpness 2 Zone", wxPoint(600, 0), wxSize(300, 60));
+		m_bcalculateSharpness2 = new wxButton(this, controls::id::BMEASURESHARPNESS2, "Bluriness 2 Zone", wxPoint(600, 0), wxSize(300, 60));
 		sizerButtons->Add(m_bcalculateSharpness2, 0, wxEXPAND | wxALL, 5);
+	}
+
+	if (myParent->m_imagemode == myParent->ResolutionImage) {
+		m_bcalculateSharpness = new wxButton(this, controls::id::BSAVEBLURINESS, "Save bluriness data", wxPoint(600, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bcalculateSharpness, 0, wxEXPAND | wxALL, 5);
+		//SaveBluriness();
 	}
 	sizer->Add(sizerButtons);
 	sizer->Add(m_bitmapPanel, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
@@ -130,7 +133,6 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	this->Layout();
 	this->Center(wxBOTH);
 
-	//MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionImage:
 		m_directory = directoryres;
@@ -220,43 +222,23 @@ void imageFrame::SetImage(wxString id)
 	long timeGet = 0;
 	cap = cv::imread(id.ToStdString());
 
-	// warning added rectangle
-	//cv::rectangle(cap, cv::Point(296, 222), cv::Point(2296, 1722), cv::Scalar(255, 255, 0), 5);
-	//cv::rectangle(cap, cv::Point(1096, 822), cv::Point(1496, 1122), cv::Scalar(0, 0, 255), 5);
-
-
-
-
 	cv::UMat capumat;
 	cv::UMat capumat2;
 	cv::Mat cap2;
 	cv::Mat cap3;
 	cv::cvtColor(cap, cap2, cv::COLOR_BGR2GRAY);
-	//cv::Canny(cap2, cap3, 50, 100, false);
-
-
-
-	//int ddepth = CV_16S;
-	//cv::Mat grad_x, grad_y;
-	//cv::Mat abs_grad_x, abs_grad_y;
-	//cv::Mat grad;
-	//cv::Sobel(cap2, grad_x, ddepth, 1, 0, 1, 1, 0, cv::BORDER_DEFAULT);
-	//cv::Sobel(cap2, grad_y, ddepth, 0, 1, 1, 1, 0, cv::BORDER_DEFAULT);
-	//cv::convertScaleAbs(grad_x, abs_grad_x);
-	//cv::convertScaleAbs(grad_y, abs_grad_y);
-	//cv::addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
-	//cv::imshow("test", grad);
-
 	
 	cap2.copyTo(capumat);
-	//cv::Canny(cap, cap, 100, 200, 3, false);
+	// Add text and area of interest
 	cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
 	cv::rectangle(cap, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
-	cv::putText(cap, cv::format("Bluriness Zone 1: %E", calcBlurriness(capumat, true)), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
-	cv::putText(cap, cv::format("Bluriness Zone 2: %E", calcBlurriness(capumat, false)), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
-	//capumat.copyTo(cap);
-	
-	
+
+	m_bluriness = calcBlurriness(capumat, true);
+	m_bluriness2 = calcBlurriness(capumat, false);
+
+	cv::putText(cap, cv::format("Bluriness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
+	cv::putText(cap, cv::format("Bluriness Zone 2: %E", m_bluriness2), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+		
 
 	if (cap.empty()) {
 		wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
@@ -287,7 +269,6 @@ void  imageFrame::CloseFrame(wxCommandEvent& event) {
 bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 	bool useMJPEG)
 {
-	//const bool        isDefaultWebCam = address.empty();
 	cv::VideoCapture* cap = nullptr;
 
 	Clear();
@@ -295,15 +276,9 @@ bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 	{
 		wxWindowDisabler disabler;
 		wxBusyCursor     busyCursor;
-
-		// warning switch back to microscope camera ( 1 )
 		cap = new cv::VideoCapture(1, cv::CAP_ANY);
 
 	}
-
-
-
-
 
 	if (!cap->isOpened())
 	{
@@ -314,15 +289,11 @@ bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 
 	// settings for the camera (resolution, framerate)
 	m_videoCapture = cap;
-	// Warning change back for the microscope camera the below settings
 	m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH, 2592);
 	m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 1944);
-	//m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH, 1280);
-	//m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 720);
 	m_videoCapture->set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
 	m_videoCapture->set(cv::CAP_PROP_EXPOSURE, -5);
 	m_videoCapture->set(cv::CAP_PROP_FPS, 30);
-	//m_videoCapture->set(5, 30);
 	m_videoCapture->set(cv::CAP_PROP_GAIN, 3);
 
 	if (!StartIPCameraThread())
@@ -349,8 +320,6 @@ bool imageFrame::StartIPCameraThread()
 }
 void imageFrame::OnIPCamera(wxCommandEvent& event)
 {
-	//m_onlyZoom = true;
-
 	if (StartIPCameraCapture())
 	{
 		LOG(INFO) << "Camera capture started.";
@@ -366,11 +335,9 @@ float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 	cv::Mat Gx, Gy;
 	cv::Mat resized;
 	if (measuring_first_zone) {
-		//src(cv::Range(222, 1722), cv::Range(296, 2296)).copyTo(resized);
 		src(cv::Range(222, 1722), cv::Range(446, 2146)).copyTo(resized);
 	}
 	else {
-		//src(cv::Range(822, 1122), cv::Range(1096, 1496)).copyTo(resized);
 		src(cv::Range(822, 1122), cv::Range(1146, 1446)).copyTo(resized);
 	}
 	cv::Sobel(resized, Gx, CV_32F, 1, 0);
@@ -393,15 +360,7 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 		delete frame;
 		return;
 	}
-	//cv::Mat dst;
-	
-	//long     timeConvert = 0;
 	frame->matBitmap.copyTo(m_ocvmat);
-	//m_ocvmat.copyTo(dst);
-	//cv::Laplacian(m_ocvmat, dst, CV_64F);
-	//cv::meanStdDev(dst,mu,sigma);
-	//focusMeasure = calcBlurriness(m_ocvmat);
-	//if (m_mode == ) WARNING IF MEASURING RESOLUTION
 
 	if (m_calculateSharpness) {
 		cv::putText(m_ocvmat, cv::format("Bluriness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
@@ -412,7 +371,7 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 		}
 	}
 	else if (m_calculateSharpness2) {
-		cv::putText(m_ocvmat, cv::format("Bluriness Zone 2: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+		cv::putText(m_ocvmat, cv::format("Bluriness Zone 2: %E", m_bluriness2), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
@@ -504,9 +463,13 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 	bitmap.SaveFile(path, wxBITMAP_TYPE_JPEG);
 	LOG(INFO) << "Snapshot saved at:" << path;
 
+
+
+
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionVideo:
 		myParent->m_buttonPanel->m_bretres->Enable();
+		SaveBluriness();
 		break;
 	case myParent->DefectsVideo:
 		myParent->m_buttonPanel->m_bretdef->Enable();
@@ -534,6 +497,28 @@ void imageFrame::OnCalculateSharpnessFirstZone(wxCommandEvent& event)
 void imageFrame::OnCalculateSharpnessSecondZone(wxCommandEvent& event)
 {
 	bool measure_first_zone = false;
-	m_bluriness = calcBlurriness(m_ocvmat, measure_first_zone);
+	m_bluriness2 = calcBlurriness(m_ocvmat, measure_first_zone);
 	m_calculateSharpness2 = true;
+}
+
+void imageFrame::OnSaveBluriness(wxCommandEvent& event) {
+	SaveBluriness();
+}
+
+void imageFrame::SaveBluriness() {
+	//m_imagemode = luminance;
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	//wxString path = m_directory + myParent->m_buttonPanel->m_idtext->GetLabel() + ".txt";
+
+	wxString path = m_directory + wxString::Format(wxT("%i/"), myParent->batchnumber) + myParent->m_buttonPanel->m_idtext->GetLabel() + ".txt";
+
+	wxTextFile* blurinessFile = new wxTextFile(path);
+	if (!wxFileExists(path)) {
+		blurinessFile->Create();
+	}
+	blurinessFile->Open();
+	blurinessFile->AddLine("blur1=" + std::to_string(m_bluriness));
+	blurinessFile->AddLine("blur2=" + std::to_string(m_bluriness2));
+	blurinessFile->Write();
+	blurinessFile->Close();
 }

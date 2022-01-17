@@ -25,6 +25,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_BUTTON(controls::id::BMEASLAM1300,  MainWindow::Capture1300Image)
     EVT_BUTTON(controls::id::BMEASLAM1500,  MainWindow::Capture1500Image)
     EVT_BUTTON(controls::id::BMEASLAM1900,  MainWindow::Capture1900Image)
+    EVT_BUTTON(controls::id::BSCANID,       MainWindow::ScanID)
     EVT_BUTTON(controls::id::BIDMAN,        MainWindow::SetManualID)
     EVT_BUTTON(controls::id::BBATCHMAN,     MainWindow::SetManualBatch)
     EVT_BUTTON(controls::id::BMEASLUM,      MainWindow::SaveLuminance)
@@ -200,6 +201,11 @@ void MainWindow::RetrieveLuminance(wxCommandEvent& event) {
     }
 }
 
+void MainWindow::ScanID(wxCommandEvent& event) {
+    wxMessageBox(wxT("The scanning feature is not yet implemented"), wxT("Warning"), wxICON_WARNING);
+}
+
+
 void  MainWindow::SetManualID(wxCommandEvent& event) {
 
     m_buttonPanel->m_idtext->SetLabel(m_buttonPanel->m_idmantext->GetLineText(0));
@@ -230,6 +236,7 @@ void MainWindow::UpdateButtons() {
         m_buttonPanel->m_bretlum->Disable();
     }
     else m_buttonPanel->m_bretlum->Enable();
+
     if (!wxFileExists(resfile)) {
         m_buttonPanel->m_bretres->Disable();
     }

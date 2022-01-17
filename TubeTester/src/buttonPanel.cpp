@@ -32,27 +32,27 @@ buttonPanel::buttonPanel(wxPanel* parent)
 
 
 	// Fourth Row
-	m_bmeasres = new wxButton(this, controls::id::BMEASRES,"Resolution", wxPoint(box, boy + 3 * (bszy + bsp)), wxSize(bszx,bszy));
-	m_bretres = new wxButton(this, controls::id::BRETRES, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 4 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bmeasres = new wxButton(this, controls::id::BMEASRES,"Resolution", wxPoint(box,					boy + 3 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretres = new wxButton(this, controls::id::BRETRES, "Retrieve r", wxPoint(box + 2 * (bszx + bsp),	boy + 3 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Fifth Row
-	m_bmeasdef = new wxButton(this, controls::id::BMEASDEF, "Defects", wxPoint(box, boy + 4*(bszy + bsp)), wxSize(bszx, bszy));
-	m_bretdef = new wxButton(this, controls::id::BRETDEF, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 3 * (bszy + bsp)), wxSize(bszx, bszy)); 
+	m_bmeasdef = new wxButton(this, controls::id::BMEASDEF, "Defects", wxPoint(box,						boy + 4 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretdef = new wxButton(this, controls::id::BRETDEF, "Retrieve d", wxPoint(box + 2 * (bszx + bsp),	boy + 4 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Sixth Row
-	m_bmeaslum = new wxButton(this, controls::id::BMEASLUM, "Luminance", wxPoint(box, boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
-	m_valuelum = new wxTextCtrl(this, controls::id::VALUELUM, "", wxPoint((box + bszx + bsp), boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
-	m_bretlum = new wxButton(this, controls::id::BRETLUM, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bmeaslum = new wxButton(this, controls::id::BMEASLUM, "Luminance", wxPoint(box,					boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_valuelum = new wxTextCtrl(this, controls::id::VALUELUM, "", wxPoint((box + bszx + bsp),			boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretlum = new wxButton(this, controls::id::BRETLUM, "Retrieve", wxPoint(box + 2 * (bszx + bsp),	boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Seventh Row
-	m_bmeaslam1300 = new wxButton(this, controls::id::BMEASLAM1300, "1300 nm", wxPoint(box, boy + 6 * (bszy + bsp)), wxSize(bszx, bszy));
-	m_bretlam1300 = new wxButton(this, controls::id::BRETLAM1300, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 6 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bmeaslam1300 = new wxButton(this, controls::id::BMEASLAM1300, "1300 nm", wxPoint(box,						boy + 6 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretlam1300 = new wxButton(this, controls::id::BRETLAM1300, "Retrieve", wxPoint(box + 2 * (bszx + bsp),	boy + 6 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Eighth Row
-	m_bmeaslam1500 = new wxButton(this, controls::id::BMEASLAM1500, "1500 nm", wxPoint(box, boy + 7 * (bszy + bsp)), wxSize(bszx, bszy));
-	m_bretlam1500 = new wxButton(this, controls::id::BRETLAM1500, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 7 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bmeaslam1500 = new wxButton(this, controls::id::BMEASLAM1500, "1500 nm", wxPoint(box,						boy + 7 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretlam1500 = new wxButton(this, controls::id::BRETLAM1500, "Retrieve", wxPoint(box + 2 * (bszx + bsp),	boy + 7 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Ninth Row
-	m_bmeaslam1900 = new wxButton(this, controls::id::BMEASLAM1900, "1900 nm", wxPoint(box, boy + 8 * (bszy + bsp)), wxSize(bszx, bszy));
-	m_bretlam1900 = new wxButton(this, controls::id::BRETLAM1900, "Retrieve", wxPoint(box + 2 * (bszx + bsp), boy + 8 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bmeaslam1900 = new wxButton(this, controls::id::BMEASLAM1900, "1900 nm", wxPoint(box,						boy + 8 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretlam1900 = new wxButton(this, controls::id::BRETLAM1900, "Retrieve", wxPoint(box + 2 * (bszx + bsp),	boy + 8 * (bszy + bsp)), wxSize(bszx, bszy));
 }

@@ -90,6 +90,7 @@ public:
     void Capture1500Image(wxCommandEvent& event);
     void Capture1900Image(wxCommandEvent& event);
     void SetManualID(wxCommandEvent& event);
+    void ScanID(wxCommandEvent& event);
     void SaveLuminance(wxCommandEvent& event);
     void RetrieveLuminance(wxCommandEvent& event);
     void OpenConfiguration(wxCommandEvent& event);
