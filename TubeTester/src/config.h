@@ -24,7 +24,7 @@ public:
 	wxTextCtrl* m_pathlambda1900;
 	wxTextCtrl* m_pathlum;
 	wxStaticBox* m_pathsbox;
-	void Close(wxCommandEvent& event);
+	void Close(wxCloseEvent& event);
 	void Save(wxCommandEvent& event);
 	wxDECLARE_EVENT_TABLE();
 };

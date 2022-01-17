@@ -1,29 +1,23 @@
 #include "config.h"
 #include "MainWindow.h"
-//#include "buttonPanel.h"
 BEGIN_EVENT_TABLE(config, wxFrame)
-EVT_BUTTON(controls::id::BCONFIGCLOSE, config::Close)
+EVT_CLOSE(config::Close)
 EVT_BUTTON(controls::id::BCONFIGSAVE, config::Save)
 END_EVENT_TABLE()
 
 config::config(wxPanel* parent, wxString title)
 	:wxFrame(parent, wxID_ANY, title, wxPoint(900, 100), wxSize(550, 600))
 {
-	//SetBackgroundColour(wxColor(32, 32, 32));
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 
 	myParent->m_buttonPanel->m_bconfig->Disable();
 
 	wxSizer* mainsizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer* saveclosesizer = new wxBoxSizer(wxHORIZONTAL);
-	//m_pathsbox = new wxStaticBox(this, controls::id::PATHBOX, "Paths");
-	//wxStaticBoxSizer* sizerpaths = new wxStaticBoxSizer(wxVERTICAL, m_pathsbox);
 	wxSizer* sizerpaths =		new wxBoxSizer(wxVERTICAL);
 	wxSizer* sizersettings =	new wxBoxSizer(wxVERTICAL);
 
 	m_bconfigsave =		new wxButton(this, controls::id::BCONFIGSAVE, "Save");
-	m_bconfigclose =	new wxButton(this, controls::id::BCONFIGCLOSE, "Close");
-
 	
 	m_pathresolutiontext =	new wxStaticText(this, controls::id::PATHRESOLUTIONTEXT,	"Resolution measurement directory");
 	m_pathdefectstext =		new wxStaticText(this, controls::id::PATHDEFECTSTEXT,		"Defect measurement directory");
@@ -42,7 +36,6 @@ config::config(wxPanel* parent, wxString title)
 	m_scalingfactortext =	new wxStaticText(this, controls::id::SCALINGFACTORTEXT, "Scaling factor, px/mm");
 	m_scalingfactor =		new wxTextCtrl(this, controls::id::SCALINGFACTOR, wxString::Format(wxT("%i"), myParent->scalingFactor), wxPoint(0, 0), wxSize(50, 20));
 
-	//sizerpaths->Add(m_pathsbox);
 	sizerpaths->Add(m_pathresolutiontext);
 	sizerpaths->Add(m_pathresolution, wxEXPAND | wxLEFT | wxRIGHT, 20);
 	sizerpaths->Add(m_pathdefectstext);
@@ -62,10 +55,6 @@ config::config(wxPanel* parent, wxString title)
 	sizersettings->AddSpacer(10);
 
 	saveclosesizer->Add(m_bconfigsave);
-	saveclosesizer->Add(m_bconfigclose);
-
-
-	//sizerpaths->SetItemMinSize(this, wxSize(300, 100));
 
 	mainsizer->Add(sizerpaths);
 	mainsizer->Add(sizersettings);
@@ -74,7 +63,7 @@ config::config(wxPanel* parent, wxString title)
 	this->SetSizer(mainsizer);
 	}
 
-void config::Close(wxCommandEvent& event) {
+void config::Close(wxCloseEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	myParent->m_buttonPanel->m_bconfig->Enable();
 	Destroy();
