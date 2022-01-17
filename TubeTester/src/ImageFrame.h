@@ -39,15 +39,15 @@ public:
 	Mode                     m_mode{ Empty };
 
 	bool m_imagesaved;
-	bool m_calculateSharpness;
-	bool m_calculateSharpness2;
+	bool m_calculateBluriness;
+	bool m_calculateBluriness2;
 
 	wxBitmapFromOpenCVPanel* m_bitmapPanel;
 	wxBitmap ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConvert);
 	void SetImage(wxString path);
 	void QuickSaveSnapshot(wxCommandEvent& event);
-	void OnCalculateSharpnessFirstZone(wxCommandEvent& event);
-	void OnCalculateSharpnessSecondZone(wxCommandEvent& event);
+	void OnCalculateBlurinessFirstZone(wxCommandEvent& event);
+	void OnCalculateBlurinessSecondZone(wxCommandEvent& event);
 	cv::Mat cap;
 	cv::UMat m_ocvmat;
 	cv::UMat dst;
@@ -58,8 +58,8 @@ public:
 	wxPanel* m_parent;
 	wxButton* m_bimageclose;
 	wxButton* m_bimagesave;
-	wxButton* m_bcalculateSharpness;
-	wxButton* m_bcalculateSharpness2;
+	wxButton* m_bcalculateBluriness;
+	wxButton* m_bcalculateBluriness2;
 	float m_bluriness;
 	float m_bluriness2;
 	void CloseFrame(wxCommandEvent& event);

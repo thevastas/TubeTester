@@ -3,8 +3,8 @@
 BEGIN_EVENT_TABLE(imageFrame, wxFrame)
 EVT_BUTTON(controls::id::BIMAGECLOSE, imageFrame::CloseFrame)
 EVT_BUTTON(controls::id::BIMAGESAVE, imageFrame::QuickSaveSnapshot)
-EVT_BUTTON(controls::id::BMEASURESHARPNESS, imageFrame::OnCalculateSharpnessFirstZone)
-EVT_BUTTON(controls::id::BMEASURESHARPNESS2, imageFrame::OnCalculateSharpnessSecondZone)
+EVT_BUTTON(controls::id::BMEASUREBLURINESS, imageFrame::OnCalculateBlurinessFirstZone)
+EVT_BUTTON(controls::id::BMEASUREBLURINESS2, imageFrame::OnCalculateBlurinessSecondZone)
 EVT_BUTTON(controls::id::BSAVEBLURINESS, imageFrame::OnSaveBluriness)
 END_EVENT_TABLE()
 
@@ -116,15 +116,15 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
 
 	if (myParent->m_imagemode == myParent->ResolutionVideo) {
-		m_bcalculateSharpness = new wxButton(this, controls::id::BMEASURESHARPNESS, "Bluriness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
-		sizerButtons->Add(m_bcalculateSharpness, 0, wxEXPAND | wxALL, 5);
-		m_bcalculateSharpness2 = new wxButton(this, controls::id::BMEASURESHARPNESS2, "Bluriness 2 Zone", wxPoint(600, 0), wxSize(300, 60));
-		sizerButtons->Add(m_bcalculateSharpness2, 0, wxEXPAND | wxALL, 5);
+		m_bcalculateBluriness = new wxButton(this, controls::id::BMEASUREBLURINESS, "Bluriness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bcalculateBluriness, 0, wxEXPAND | wxALL, 5);
+		m_bcalculateBluriness2 = new wxButton(this, controls::id::BMEASUREBLURINESS2, "Bluriness 2 Zone", wxPoint(600, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bcalculateBluriness2, 0, wxEXPAND | wxALL, 5);
 	}
 
 	if (myParent->m_imagemode == myParent->ResolutionImage) {
-		m_bcalculateSharpness = new wxButton(this, controls::id::BSAVEBLURINESS, "Save bluriness data", wxPoint(600, 0), wxSize(300, 60));
-		sizerButtons->Add(m_bcalculateSharpness, 0, wxEXPAND | wxALL, 5);
+		m_bcalculateBluriness = new wxButton(this, controls::id::BSAVEBLURINESS, "Save bluriness data", wxPoint(600, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bcalculateBluriness, 0, wxEXPAND | wxALL, 5);
 		//SaveBluriness();
 	}
 	sizer->Add(sizerButtons);
@@ -362,20 +362,20 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 	}
 	frame->matBitmap.copyTo(m_ocvmat);
 
-	if (m_calculateSharpness) {
+	if (m_calculateBluriness) {
 		cv::putText(m_ocvmat, cv::format("Bluriness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
-			m_calculateSharpness = false;
+			m_calculateBluriness = false;
 		}
 	}
-	else if (m_calculateSharpness2) {
+	else if (m_calculateBluriness2) {
 		cv::putText(m_ocvmat, cv::format("Bluriness Zone 2: %E", m_bluriness2), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
-			m_calculateSharpness2 = false;
+			m_calculateBluriness2 = false;
 		}
 	}
 
@@ -487,18 +487,18 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 	m_imagesaved = true;
 }
 
-void imageFrame::OnCalculateSharpnessFirstZone(wxCommandEvent& event)
+void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 {
 	bool measure_first_zone = true;
 	m_bluriness = calcBlurriness(m_ocvmat, measure_first_zone);
-	m_calculateSharpness = true;
+	m_calculateBluriness = true;
 }
 
-void imageFrame::OnCalculateSharpnessSecondZone(wxCommandEvent& event)
+void imageFrame::OnCalculateBlurinessSecondZone(wxCommandEvent& event)
 {
 	bool measure_first_zone = false;
 	m_bluriness2 = calcBlurriness(m_ocvmat, measure_first_zone);
-	m_calculateSharpness2 = true;
+	m_calculateBluriness2 = true;
 }
 
 void imageFrame::OnSaveBluriness(wxCommandEvent& event) {
