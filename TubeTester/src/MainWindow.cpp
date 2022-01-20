@@ -171,7 +171,6 @@ void MainWindow::Capture1900Image(wxCommandEvent& event) {
   
 void MainWindow::SaveLuminance(wxCommandEvent& event) {
     m_imagemode = luminance;
-    wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/"; // move away to configs
     wxString pathLuminance = directoryLuminance + m_buttonPanel->m_idtext->GetLabel()+".txt";
     wxTextFile* luminanceFile = new wxTextFile(pathLuminance);
     if (!wxFileExists(pathLuminance)) {
@@ -185,8 +184,8 @@ void MainWindow::SaveLuminance(wxCommandEvent& event) {
 
 void MainWindow::RetrieveLuminance(wxCommandEvent& event) {
     m_imagemode = luminance;
-
-    wxString pathLuminance = directoryLuminance + m_buttonPanel->m_idtext->GetLabel()+".txt";
+    MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+    wxString pathLuminance = directoryLuminance + wxString::Format(wxT("%i/"), myParent->batchnumber) + m_buttonPanel->m_idtext->GetLabel()+".txt";
     wxTextFile* luminanceFile = new wxTextFile(pathLuminance);
     if (wxFileExists(pathLuminance)) {
         luminanceFile->Open();

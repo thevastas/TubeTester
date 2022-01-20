@@ -230,14 +230,25 @@ void imageFrame::SetImage(wxString id)
 	
 	cap2.copyTo(capumat);
 	// Add text and area of interest
-	cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
-	cv::rectangle(cap, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
+	if (myParent->m_imagemode == myParent->ResolutionImage) {
+		cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
+		cv::rectangle(cap, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
 
-	m_bluriness = calcBlurriness(capumat, true);
-	m_bluriness2 = calcBlurriness(capumat, false);
+		m_bluriness = calcBlurriness(capumat, true);
+		m_bluriness2 = calcBlurriness(capumat, false);
 
-	cv::putText(cap, cv::format("Bluriness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
-	cv::putText(cap, cv::format("Bluriness Zone 2: %E", m_bluriness2), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+		cv::putText(cap, cv::format("Bluriness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
+		cv::putText(cap, cv::format("Bluriness Zone 2: %E", m_bluriness2), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+
+	}
+	if (myParent->m_imagemode == myParent->l1300Image || myParent->m_imagemode == myParent->l1500Image || myParent->m_imagemode == myParent->l1900Image) {
+		m_tsumintensity = calcSumIntensity(capumat, true);
+		m_csumintensity = calcSumIntensity(capumat, false);
+		cv::circle(cap, cv::Point(1296, 972), sumcircleradius, cv::Scalar(0, 0, 255), 3);
+		cv::putText(cap, cv::format("Total Intensity: %E", m_tsumintensity), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
+		cv::putText(cap, cv::format("Circle Intensity: %E", m_csumintensity), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+	}
+
 		
 
 	if (cap.empty()) {
@@ -348,12 +359,32 @@ float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 	return static_cast<float>(1. / (sumSq / src.size().area() + 1e-6));
 }
 
+float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
+{
+	float sum;
+	cv::Mat resized;
+	if (!measuring_total) {
+		cv::Mat mask = cv::Mat::zeros(src.size(), CV_8UC1);
+		cv::Mat masked;
+		cv::circle(mask, cv::Point(1296, 972), sumcircleradius, 255, -1);
+		
+		src.copyTo(resized, mask);
+		//cv::bitwise_and(src, src, resized, mask=mask);
+		//src(cv::Range(222, 1722), cv::Range(446, 2146)).copyTo(resized);
+	}
+	else {
+		src.copyTo(resized);
+	}
+
+
+	return cv::sum(resized)[0];
+}
 
 void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 {
 
 
-
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	CameraThread::CameraFrame* frame = evt.GetPayload<CameraThread::CameraFrame*>();
 	if (m_mode != IPCamera)
 	{
@@ -379,9 +410,14 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 		}
 	}
 
-	
-	cv::rectangle(m_ocvmat, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
-	cv::rectangle(m_ocvmat, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
+	if (myParent->m_imagemode == myParent->ResolutionVideo) {
+		cv::rectangle(m_ocvmat, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
+		cv::rectangle(m_ocvmat, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
+	}
+
+	if (myParent->m_imagemode == myParent->l1300Video || myParent->m_imagemode == myParent->l1500Video || myParent->m_imagemode == myParent->l1900Video) {
+		cv::circle(m_ocvmat, cv::Point(1296, 972), sumcircleradius, cv::Scalar(0, 0, 255), 3);
+	}
 
 	if (m_imagesaved) {
 			cv::putText(m_ocvmat, "Image saved",cv::Point(100,100), cv::FONT_HERSHEY_PLAIN, 10, cv::Scalar(255,255,0),5); // WARNING ADD TEXTBOX

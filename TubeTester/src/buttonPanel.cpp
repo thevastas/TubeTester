@@ -33,11 +33,11 @@ buttonPanel::buttonPanel(wxPanel* parent)
 
 	// Fourth Row
 	m_bmeasres = new wxButton(this, controls::id::BMEASRES,"Resolution", wxPoint(box,					boy + 3 * (bszy + bsp)), wxSize(bszx, bszy));
-	m_bretres = new wxButton(this, controls::id::BRETRES, "Retrieve r", wxPoint(box + 2 * (bszx + bsp),	boy + 3 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretres = new wxButton(this, controls::id::BRETRES, "Retrieve", wxPoint(box + 2 * (bszx + bsp),	boy + 3 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Fifth Row
 	m_bmeasdef = new wxButton(this, controls::id::BMEASDEF, "Defects", wxPoint(box,						boy + 4 * (bszy + bsp)), wxSize(bszx, bszy));
-	m_bretdef = new wxButton(this, controls::id::BRETDEF, "Retrieve d", wxPoint(box + 2 * (bszx + bsp),	boy + 4 * (bszy + bsp)), wxSize(bszx, bszy));
+	m_bretdef = new wxButton(this, controls::id::BRETDEF, "Retrieve", wxPoint(box + 2 * (bszx + bsp),	boy + 4 * (bszy + bsp)), wxSize(bszx, bszy));
 
 	// Sixth Row
 	m_bmeaslum = new wxButton(this, controls::id::BMEASLUM, "Luminance", wxPoint(box,					boy + 5 * (bszy + bsp)), wxSize(bszx, bszy));

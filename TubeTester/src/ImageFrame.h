@@ -15,6 +15,8 @@ public:
 	// Camera stuff
 	cv::VideoCapture* m_videoCapture{ nullptr };
 	CameraThread* m_cameraThread{ nullptr };
+	//warning
+	
 
 	bool StartIPCameraCapture(const wxSize& resolution = wxSize(),
 		bool useMJPEG = false);
@@ -25,6 +27,7 @@ public:
 	void OnCameraEmpty(wxThreadEvent&);
 	void OnCameraException(wxThreadEvent& evt);
 	float calcBlurriness(const cv::UMat& src, bool measuring_first_zone);
+	float calcSumIntensity(const cv::UMat& src, bool measuring_total);
 	void OnSaveBluriness(wxCommandEvent& event);
 	void SaveBluriness();
 
@@ -62,8 +65,11 @@ public:
 	wxButton* m_bcalculateBluriness2;
 	float m_bluriness;
 	float m_bluriness2;
+	float m_tsumintensity;
+	float m_csumintensity;
 	void CloseFrame(wxCommandEvent& event);
 	int framecounter;
+	int sumcircleradius = 800;
 	wxString m_directory;
 	wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/";
 	wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/";
