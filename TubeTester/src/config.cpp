@@ -5,6 +5,10 @@ EVT_CLOSE(config::Close)
 EVT_BUTTON(controls::id::BCONFIGSAVE, config::Save)
 END_EVENT_TABLE()
 
+
+/*!
+* Initializer for configuration window, which is used to set paths for the directories and other settings used for evaluation
+*/
 config::config(wxPanel* parent, wxString title)
 	:wxFrame(parent, wxID_ANY, title, wxPoint(900, 100), wxSize(550, 600))
 {
@@ -63,12 +67,18 @@ config::config(wxPanel* parent, wxString title)
 	this->SetSizer(mainsizer);
 	}
 
+/*!
+* Configuration window destroyer
+*/
 void config::Close(wxCloseEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	myParent->m_buttonPanel->m_bconfig->Enable();
 	Destroy();
 }
 
+/*!
+* Function for saving of the configuration settings into a text file
+*/
 void config::Save(wxCommandEvent& event) {
 	
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();

@@ -2,6 +2,10 @@
 #include "MainWindow.h"
 #include "buttonPanel.h"
 
+
+/*!
+* Draws the interface for the main window: buttons, textboxes
+*/
 buttonPanel::buttonPanel(wxPanel* parent)
 	: wxPanel(parent, -1, wxPoint(10, 10), wxSize(560, 980))
 {
