@@ -133,7 +133,7 @@ void MainWindow::CaptureResolutionImage(wxCommandEvent& event) {
     m_imagemode = ResolutionVideo;
     m_capres = new imageFrame(m_parent, "Capturing resolution image: " + m_buttonPanel->m_idtext->GetLabel());
     m_capres->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
-    m_capres->OnIPCamera(event);
+    m_capres->OnCamera(event);
     m_capres->Show();
 }
 
@@ -141,7 +141,7 @@ void MainWindow::CaptureDefectsImage(wxCommandEvent& event) {
     m_imagemode = DefectsVideo;
     m_capdef = new imageFrame(m_parent, "Capturing defects image: " + m_buttonPanel->m_idtext->GetLabel());
     m_capdef->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
-    m_capdef->OnIPCamera(event);
+    m_capdef->OnCamera(event);
     m_capdef->Show();
 }
 
@@ -149,7 +149,7 @@ void MainWindow::Capture1300Image(wxCommandEvent& event) {
     m_imagemode = l1300Video;
     m_cap1300 = new imageFrame(m_parent, "Capturing 1300 nm image: " + m_buttonPanel->m_idtext->GetLabel());
     m_cap1300->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
-    m_cap1300->OnIPCamera(event);
+    m_cap1300->OnCamera(event);
     m_cap1300->Show();
 }
 
@@ -157,7 +157,7 @@ void MainWindow::Capture1500Image(wxCommandEvent& event) {
     m_imagemode = l1500Video;
     m_cap1500 = new imageFrame(m_parent, "Capturing 1500 nm image: " + m_buttonPanel->m_idtext->GetLabel());
     m_cap1500->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
-    m_cap1500->OnIPCamera(event);
+    m_cap1500->OnCamera(event);
     m_cap1500->Show();
 }
 
@@ -165,7 +165,7 @@ void MainWindow::Capture1900Image(wxCommandEvent& event) {
     m_imagemode = l1900Video;
     m_cap1900 = new imageFrame(m_parent, "Capturing 1900 nm image: " + m_buttonPanel->m_idtext->GetLabel());
     m_cap1900->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
-    m_cap1900->OnIPCamera(event);
+    m_cap1900->OnCamera(event);
     m_cap1900->Show();
 }
   

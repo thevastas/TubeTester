@@ -14,7 +14,9 @@
 
 #include "bmpfromocvpanel.h"
 
-
+/*!
+* Class initializer for wxBitmapFromOpenCVPanel. Sets the background colour, style, scrolling style
+*/
 wxBitmapFromOpenCVPanel::wxBitmapFromOpenCVPanel(wxFrame* parent)
     : wxScrolledCanvas(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
 {
@@ -29,6 +31,10 @@ wxBitmapFromOpenCVPanel::wxBitmapFromOpenCVPanel(wxFrame* parent)
     Bind(wxEVT_PAINT, &wxBitmapFromOpenCVPanel::OnPaint, this);
 }
 
+
+/*!
+* Determines the correct size for the image to be displayed on the bitmap panel
+*/
 bool wxBitmapFromOpenCVPanel::SetBitmap(const wxBitmap& bitmap, const long timeGet, const long timeConvert)
 {
     m_bitmap = bitmap;
@@ -54,6 +60,10 @@ bool wxBitmapFromOpenCVPanel::SetBitmap(const wxBitmap& bitmap, const long timeG
     return true;
 }
 
+
+/*!
+* Determines the correct size for the bitmap panel
+*/
 wxSize wxBitmapFromOpenCVPanel::DoGetBestClientSize() const
 {
     if (!m_bitmap.IsOk())
@@ -70,6 +80,10 @@ wxSize wxBitmapFromOpenCVPanel::DoGetBestClientSize() const
     return size;
 }
 
+
+/*!
+* Paint event function, draws the image onto the bitmap panel
+*/
 void wxBitmapFromOpenCVPanel::OnPaint(wxPaintEvent&)
 {
     wxAutoBufferedPaintDC dc(this);

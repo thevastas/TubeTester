@@ -18,11 +18,11 @@ public:
 	//warning
 	
 
-	bool StartIPCameraCapture(const wxSize& resolution = wxSize(),
+	bool StartCameraCapture(const wxSize& resolution = wxSize(),
 		bool useMJPEG = false);
-	bool StartIPCameraThread();
-	void DeleteIPCameraThread();
-	void OnIPCamera(wxCommandEvent&);
+	bool StartCameraThread();
+	void DeleteCameraThread();
+	void OnCamera(wxCommandEvent&);
 	void OnCameraFrame(wxThreadEvent& evt);
 	void OnCameraEmpty(wxThreadEvent&);
 	void OnCameraException(wxThreadEvent& evt);
@@ -36,7 +36,7 @@ public:
 	{
 		Empty,
 		Image,
-		IPCamera
+		Camera
 	};
 
 	Mode                     m_mode{ Empty };

@@ -15,9 +15,10 @@ wxDEFINE_EVENT(wxEVT_IPCAMERA_EMPTY, wxThreadEvent);
 // An exception was thrown in the camera thread.
 wxDEFINE_EVENT(wxEVT_IPCAMERA_EXCEPTION, wxThreadEvent);
 
-//
-// Worker thread for retrieving images from WebCam or IP Camera
-// and sending them to the main thread for display.
+/*!
+*  Worker thread for retrieving images from the camera
+*  and sending them to the main thread for display.
+*/
 class CameraThread : public wxThread
 {
 public:
@@ -44,6 +45,9 @@ CameraThread::CameraThread(wxEvtHandler* eventSink, cv::VideoCapture* camera)
 	wxASSERT(m_camera);
 }
 
+/*!
+*  Thread function to set an image payload 
+*/
 wxThread::ExitCode CameraThread::Entry()
 {
 	wxStopWatch  stopWatch;
@@ -99,6 +103,10 @@ wxThread::ExitCode CameraThread::Entry()
 	return static_cast<wxThread::ExitCode>(nullptr);
 }
 
+/*!
+* Initializer for the image window, which displays the retrieved window or opens a camera to take the picture.
+* Depending on the m_imagemode it also sets the directory of the images
+*/
 imageFrame::imageFrame(wxPanel* parent, wxString title)
 	:wxFrame(parent, wxID_ANY, title, wxPoint(900,100), wxSize(700, 600))
 {
@@ -190,7 +198,9 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 
 }
 
-
+/*!
+* Function that forwards the opencv Mat for conversion into a suitable format for displaying (wxBitmap)
+*/
 wxBitmap imageFrame::ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConvert)
 {
 	wxCHECK(!matBitmap.empty(), wxBitmap());
@@ -213,6 +223,9 @@ wxBitmap imageFrame::ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConv
 	return bitmap;
 }
 
+/*!
+* Sets the desired image on the imageframe, draws the regions of interest and shows the calculated values for bluriness/total intensity
+*/
 void imageFrame::SetImage(wxString id)
 {
 	// warning add batch number
@@ -268,16 +281,20 @@ void imageFrame::SetImage(wxString id)
 	}
 }
 
-
+/*!
+* Destroys the imageframe when close event is initiated
+*/
 void  imageFrame::CloseFrame(wxCommandEvent& event) {
 
 	Clear();
 	Destroy();
 }
 
-// IP CAMERA 
 
-bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
+/*!
+* Sets the camera settings (width, height, exposure, fps, gain) and starts the camera capture by using the opencv videocapture function
+*/
+bool imageFrame::StartCameraCapture(const wxSize& resolution,
 	bool useMJPEG)
 {
 	cv::VideoCapture* cap = nullptr;
@@ -307,7 +324,7 @@ bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 	m_videoCapture->set(cv::CAP_PROP_FPS, 30);
 	m_videoCapture->set(cv::CAP_PROP_GAIN, 3);
 
-	if (!StartIPCameraThread())
+	if (!StartCameraThread())
 
 	{
 		Clear();
@@ -316,7 +333,12 @@ bool imageFrame::StartIPCameraCapture(const wxSize& resolution,
 
 	return true;
 }
-bool imageFrame::StartIPCameraThread()
+
+
+/*!
+* Starts the camera thread
+*/
+bool imageFrame::StartCameraThread()
 {
 	m_cameraThread = new CameraThread(this, m_videoCapture);
 	if (m_cameraThread->Run() != wxTHREAD_NO_ERROR)
@@ -329,18 +351,26 @@ bool imageFrame::StartIPCameraThread()
 
 	return true;
 }
-void imageFrame::OnIPCamera(wxCommandEvent& event)
+
+
+/*!
+* Command event that is used for starting the camera capture
+*/
+void imageFrame::OnCamera(wxCommandEvent& event)
 {
-	if (StartIPCameraCapture())
+	if (StartCameraCapture())
 	{
 		LOG(INFO) << "Camera capture started.";
-		m_mode = IPCamera;
+		m_mode = Camera;
 	}
 	else Clear();
 	Refresh();
 }
 
-
+/*
+* Calculates the bluriness of the area of interest in an image (if measuring_first_zone is true),
+* calculates the bluriness of the whole image otherwise
+*/
 float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 {
 	cv::Mat Gx, Gy;
@@ -359,6 +389,10 @@ float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 	return static_cast<float>(1. / (sumSq / src.size().area() + 1e-6));
 }
 
+/*!
+* Calculates the intensity sum of the area of interest in an image (if measuring_total is false),
+* calculates the total intensity of the image otherwise
+*/
 float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
 {
 	float sum;
@@ -380,13 +414,16 @@ float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
 	return cv::sum(resized)[0];
 }
 
+
+/*!
+* Function that is executed on every camera frame. It gets the payload from the thread, displays it and draws information and areas of interest
+*/
 void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 {
 
-
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	CameraThread::CameraFrame* frame = evt.GetPayload<CameraThread::CameraFrame*>();
-	if (m_mode != IPCamera)
+	if (m_mode != Camera)
 	{
 		delete frame;
 		return;
@@ -428,22 +465,20 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 			}
 	}; 
 
-
-
 	wxBitmap bitmap = ConvertMatToBitmap(m_ocvmat, m_timeConvert);
-
-
-
 
 	if (bitmap.IsOk())
 		m_bitmapPanel->SetBitmap(bitmap, frame->timeGet, 0);
 	else
 		m_bitmapPanel->SetBitmap(wxBitmap(), 0, 0);
 
-
 	delete frame;
 }
-void imageFrame::DeleteIPCameraThread()
+
+/*!
+* Deletes the camera thread when the quit event is executed
+*/
+void imageFrame::DeleteCameraThread()
 {
 	if (m_cameraThread)
 	{
@@ -454,23 +489,31 @@ void imageFrame::DeleteIPCameraThread()
 	}
 }
 
+/*!
+* Clears the image when the connection to the camera is lost
+*/
 void imageFrame::OnCameraEmpty(wxThreadEvent&)
 {
 	LOG(ERROR) << "Connection to the camera lost.";
-
 	Clear();
 }
 
+
+/*!
+* Clears the image when a thread exception is caught
+*/
 void imageFrame::OnCameraException(wxThreadEvent& evt)
 {
 	LOG(ERROR) << "Exception in the camera thread: %s" << evt.GetString();
 	Clear();
 }
 
-
+/*!
+* Clears the image and deletes the camera thread
+*/
 void imageFrame::Clear()
 {
-	DeleteIPCameraThread();
+	DeleteCameraThread();
 
 	if (m_videoCapture)
 	{
@@ -483,6 +526,10 @@ void imageFrame::Clear()
 
 }
 
+/*!
+* Saves a JPEG snapshot of the displayed image. The filename is chosen by combining the batch number and the serial number of the tube
+* and saved in the directory related to the measurement type, e.g. "defects", "resolution"
+*/
 void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 {
 	auto t = std::time(nullptr);
@@ -498,9 +545,6 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 	}
 	bitmap.SaveFile(path, wxBITMAP_TYPE_JPEG);
 	LOG(INFO) << "Snapshot saved at:" << path;
-
-
-
 
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionVideo:
@@ -523,6 +567,9 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 	m_imagesaved = true;
 }
 
+/*!
+* Command function to calculate the bluriness of the first zone (region of interest)
+*/
 void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 {
 	bool measure_first_zone = true;
@@ -530,6 +577,10 @@ void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 	m_calculateBluriness = true;
 }
 
+
+/*!
+* Command function to calculate the bluriness of the second zone (whole image)
+*/
 void imageFrame::OnCalculateBlurinessSecondZone(wxCommandEvent& event)
 {
 	bool measure_first_zone = false;
@@ -537,10 +588,16 @@ void imageFrame::OnCalculateBlurinessSecondZone(wxCommandEvent& event)
 	m_calculateBluriness2 = true;
 }
 
+/*!
+* Command event for the saving of the bluriness value into a text file
+*/
 void imageFrame::OnSaveBluriness(wxCommandEvent& event) {
 	SaveBluriness();
 }
 
+/*!
+* Saves the bluriness values for both zones into a text file, e.g. blur1=0.0001 blur2=0.002
+*/
 void imageFrame::SaveBluriness() {
 	//m_imagemode = luminance;
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
