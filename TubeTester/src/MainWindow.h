@@ -35,50 +35,7 @@ public:
         const wxString& name = wxASCII_STR(wxFrameNameStr));
 
     ~MainWindow();
-    enum ImageMode
-    {
-        Empty,
-        ResolutionImage,
-        DefectsImage,
-        l1300Image,
-        l1500Image,
-        l1900Image,
-        ResolutionVideo,
-        DefectsVideo,
-        l1300Video,
-        l1500Video,
-        l1900Video,
-        luminance
-    };
-
-    ImageMode                     m_imagemode{ Empty };
-
-    int frameoriginx = 1000;
-    int frameoriginy = 100;
-    int framesizex = 1067;
-    int framesizey = 900;
-
-
-
-    wxPanel* m_parent;
-    buttonPanel* m_buttonPanel;
     
-    cv::VideoCapture* m_videoCapture{ nullptr };
-    CameraThread* m_cameraThread{ nullptr };
-    imageFrame* m_resolutionWindow;
-    imageFrame* m_defectsWindow;
-    imageFrame* m_1300Window;
-    imageFrame* m_1500Window;
-    imageFrame* m_1900Window;
-    imageFrame* m_capres;
-    imageFrame* m_capdef;
-    imageFrame* m_cap1300;
-    imageFrame* m_cap1500;
-    imageFrame* m_cap1900;
-    config* m_configwindow;
-
-    wxFileConfig* m_configfile;
-
     void OpenResolutionImage(wxCommandEvent& event);
     void OpenDefectsImage(wxCommandEvent& event);
     void Open1300Image(wxCommandEvent& event);
@@ -96,25 +53,66 @@ public:
     void OpenConfiguration(wxCommandEvent& event);
     void SetManualBatch(wxCommandEvent& event);
     void UpdateButtons();
+    
+    enum ImageMode
+    {
+        Empty,              //!< Mode for when the image is not retrieved
+        ResolutionImage,    //!< Mode for retrieving the resolution measurement image
+        DefectsImage,       //!< Mode for retrieving the defects measurement image
+        l1300Image,         //!< Mode for retrieving the 1300 nm wavelength sensitivity image
+        l1500Image,         //!< Mode for retrieving the 1500 nm wavelength sensitivity image
+        l1900Image,         //!< Mode for retrieving the 1900 nm wavelength sensitivity image
+        ResolutionVideo,    //!< Mode for recording the resolution image
+        DefectsVideo,       //!< Mode for recording the defects image
+        l1300Video,         //!< Mode for recording the 1300 nm wavelength sensitivity image
+        l1500Video,         //!< Mode for recording the 1500 nm wavelength sensitivity image
+        l1900Video,         //!< Mode for recording the 1900 nm wavelength sensitivity image
+        luminance           //!< Mode for recording or retrieving the luminance values
+    };
 
-    wxString appPath;
+    ImageMode                     m_imagemode{ Empty };
 
-    wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/";  // TODO move away to configs
-    wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/";
-    wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/";
-    wxString directory1300 = "D:/ADOS-Tech/metrology - Documents/img/1300/";
-    wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/";
-    wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/";
+    int frameoriginx = 1000;    //!< Horizontal starting position of the configuration window
+    int frameoriginy = 100;     //!< Vertical starting position of the configuration window
+    int framesizex = 1067;      //!< Starting width of the configuration window
+    int framesizey = 900;       //!< Starting heigth of the configuration window
 
-    wxString lumfile;
-    wxString resfile;
-    wxString deffile;
-    wxString l1300file;
-    wxString l1500file;
-    wxString l1900file;
 
-    int batchnumber = 0;
-    int scalingFactor = 10000;
+
+    wxPanel* m_parent;
+    buttonPanel* m_buttonPanel; //!< Panel in which all the buttons of the main window are stored
+    
+    imageFrame* m_resolutionWindow; //!< imageframe instance (window) for retrieving the resolution image
+    imageFrame* m_defectsWindow;    //!< imageframe instance (window) for retrieving the defects image
+    imageFrame* m_1300Window;       //!< imageframe instance (window) for retrieving the 1300 nm wavelength sensitivity image
+    imageFrame* m_1500Window;       //!< imageframe instance (window) for retrieving the 1500 nm wavelength sensitivity image
+    imageFrame* m_1900Window;       //!< imageframe instance (window) for retrieving the 1900 nm wavelength sensitivity image
+    imageFrame* m_capres;           //!< imageframe instance (window) for recording of the resolution image
+    imageFrame* m_capdef;           //!< imageframe instance (window) for recording of the defects image
+    imageFrame* m_cap1300;          //!< imageframe instance (window) for recording of the 1300 nm wavelength sensitivity image
+    imageFrame* m_cap1500;          //!< imageframe instance (window) for recording of the 1500 nm wavelength sensitivity image
+    imageFrame* m_cap1900;          //!< imageframe instance (window) for recording of the 1900 nm wavelength sensitivity image
+    config* m_configwindow;
+
+    wxFileConfig* m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE); //!< wxFileConfig instance for the local text config file
+    wxString appPath; //!< String into which the application path is saved
+
+    wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/"; //!< Default directory for the resolution images (possible duplicate, also is retrieved from config file)
+    wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/"; //!< Default directory for the defects images (possible duplicate, also is retrieved from config file)
+    wxString directory1300 = "D:/ADOS-Tech/metrology - Documents/img/1300/"; //!< Default directory for the 1300 nm sensitivity images (possible duplicate, also is retrieved from config file)
+    wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/"; //!< Default directory for the 1500 nm sensitivity images (possible duplicate, also is retrieved from config file)
+    wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/"; //!< Default directory for the 1900 nm sensitivity images (possible duplicate, also is retrieved from config file)
+    wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/"; //!< Default directory for the luminance values (possible duplicate, also is retrieved from config file)
+
+    wxString lumfile;   //!< Full path to the luminance file
+    wxString resfile;   //!< Full path to the resolution image file
+    wxString deffile;   //!< Full path to the defects image file
+    wxString l1300file; //!< Full path to the 1300 nm wavelength sensitivity file
+    wxString l1500file; //!< Full path to the 1500 nm wavelength sensitivity file
+    wxString l1900file; //!< Full path to the 1900 nm wavelength sensitivity file
+
+    int batchnumber = 0;    //!< Initial value for the measurement batch number is set to zero, which is default for test/old measurements
+    int scalingFactor = 10000; //!< Default value for the scaling factor
     wxDECLARE_EVENT_TABLE();
 };
 

@@ -55,7 +55,7 @@ MainWindow::MainWindow(wxWindow* parent,
     wxFileName f(wxStandardPaths::Get().GetExecutablePath());
     appPath=(f.GetPath() + _T("\\config.ini"));
 
-    m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    //m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
 
     //main panel
     m_parent = new wxPanel(this, wxID_ANY);

@@ -33,8 +33,8 @@ public:
 	void Clear();
 
 
-	cv::VideoCapture* m_videoCapture{ nullptr }; //!< 
-	CameraThread* m_cameraThread{ nullptr };
+	cv::VideoCapture* m_videoCapture{ nullptr }; //!< Initialization of OpenCV videocapture instance that is used for recording images
+	CameraThread* m_cameraThread{ nullptr }; //!< Initialization of the camera thread for recording
 
 	enum Mode 
 	{
@@ -45,40 +45,33 @@ public:
 
 	Mode                     m_mode{ Empty };
 
-	bool m_imagesaved;
-	bool m_calculateBluriness;
-	bool m_calculateBluriness2;
+	bool m_imagesaved; //!< Was the image saved?, used for putting the saving information on the screen
+	bool calculate_bluriness_first_zone; //!< Should the bluriness be calculated for the first zone
+	bool calculate_bluriness_second_zone; //!< Should the bluriness be calculated for the second zone (whole image)
 
-	wxBitmapFromOpenCVPanel* m_bitmapPanel;
-	wxBitmap ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConvert);
+	wxBitmapFromOpenCVPanel* m_bitmapPanel; //!< Bitmap panel onto which the image from OpenCV is drawn
+	wxBitmap ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConvert);  //!< Bitmap converted from an OpenCV image
 	wxPanel* m_parent;
-	wxButton* m_bimageclose;
-	wxButton* m_bimagesave;
-	wxButton* m_bcalculateBluriness;
-	wxButton* m_bcalculateBluriness2;
+	wxButton* m_bimageclose; //!< Button for closing the imageframe window
+	wxButton* m_bimagesave; //!< Button for saving the image into a respective directory
+	wxButton* m_bcalculateBluriness; //!< Button for calculating the bluriness in the first zone
+	wxButton* m_bcalculateBluriness2; //!< Button for calculating the bluriness in the second zone (whole image)
 
-	wxString m_directory;
-	wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/";
-	wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/";
-	wxString directory1300 = "D:/ADOS-Tech/metrology - Documents/img/1300/";
-	wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/";
-	wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/";
+	wxString m_directory; //!< General holder for the path of an image, the value to which is given after determining the measurement type
 
-	cv::Mat cap;
-	cv::UMat m_ocvmat;
-	cv::UMat dst;
-	long m_timeConvert=0;
-	float focusMeasure;
-	cv::Scalar mu, sigma;
+	cv::Mat cap; //!< Mat Frame that was captured by OpenCV
+	cv::UMat m_ocvmat; //!< Frame converted to UMat with CV_8UC3 format (8 bit, unsigned, 3 channels)
 
-	std::stringstream socv;
+	long m_timeConvert = 0; //!< Time needed for the conversion from OpenCV frame to a WxBitmap
 
-	float m_bluriness;
-	float m_bluriness2;
-	float m_tsumintensity;
-	float m_csumintensity;
-	int framecounter;
-	int sumcircleradius = 800;
+	std::stringstream ss; //!< Stringstream used to concatenate directory paths
+
+	float m_bluriness; //!< Bluriness value for the first zone, used for resolution measurements
+	float m_bluriness2; //!< Bluriness value for the second zone (whole image), used for resolution measurements
+	float m_tsumintensity; //!< Total intensity sum of the image (whole image), used for sensitivity measurements
+	float m_csumintensity; //!< Intensity sum of pixels within the defined circle of the image, used for sensitivity measurements
+	int framecounter; //!< Iteration variable to count the number of frames passed
+	int sumcircleradius = 800; //!< Radius of the circle within which the pixels are supposed to be summed, used for sensitivity measurements
 
 	wxDECLARE_EVENT_TABLE();
 };

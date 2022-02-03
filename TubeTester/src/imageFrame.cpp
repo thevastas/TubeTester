@@ -143,48 +143,48 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionImage:
-		m_directory = directoryres;
+		m_directory = myParent->directoryres;
 		SetImage(myParent -> resfile); 
 		m_bimagesave->Disable();
 		break;
 	case myParent->DefectsImage:
-		m_directory = directorydef;
+		m_directory = myParent->directorydef;
 		SetImage(myParent->deffile);
 		m_bimagesave->Disable();
 		break;
 	case myParent->l1300Image:
-		m_directory = directory1300;
+		m_directory = myParent->directory1300;
 		SetImage(myParent->l1300file);
 		m_bimagesave->Disable();
 		break;
 	case myParent->l1500Image:
-		m_directory = directory1500;
+		m_directory = myParent->directory1500;
 		SetImage(myParent->l1500file);
 		m_bimagesave->Disable();
 		break;
 	case myParent->l1900Image:
-		m_directory = directory1900;
+		m_directory = myParent->directory1900;
 		SetImage(myParent->l1300file);
 		m_bimagesave->Disable();
 		break;
 	case myParent->ResolutionVideo:
-		m_directory = directoryres;
+		m_directory = myParent->directoryres;
 		m_bimagesave->Enable();
 		break;
 	case myParent->DefectsVideo:
-		m_directory = directorydef;
+		m_directory = myParent->directorydef;
 		m_bimagesave->Enable();
 		break;
 	case myParent->l1300Video:
-		m_directory = directory1300;
+		m_directory = myParent->directory1300;
 		m_bimagesave->Enable();
 		break;
 	case myParent->l1500Video:
-		m_directory = directory1500;
+		m_directory = myParent->directory1500;
 		m_bimagesave->Enable();
 		break;
 	case myParent->l1900Video:
-		m_directory = directory1900;
+		m_directory = myParent->directory1900;
 		m_bimagesave->Enable();
 		break;
 	}
@@ -430,20 +430,20 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 	}
 	frame->matBitmap.copyTo(m_ocvmat);
 
-	if (m_calculateBluriness) {
+	if (calculate_bluriness_first_zone) {
 		cv::putText(m_ocvmat, cv::format("Bluriness Zone 1: %E", m_bluriness), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
-			m_calculateBluriness = false;
+			calculate_bluriness_first_zone = false;
 		}
 	}
-	else if (m_calculateBluriness2) {
+	else if (calculate_bluriness_second_zone) {
 		cv::putText(m_ocvmat, cv::format("Bluriness Zone 2: %E", m_bluriness2), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
 		framecounter++;
 		if (framecounter > 8) {
 			framecounter = 0;
-			m_calculateBluriness2 = false;
+			calculate_bluriness_second_zone = false;
 		}
 	}
 
@@ -534,7 +534,7 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 {
 	auto t = std::time(nullptr);
 	auto tm = *std::localtime(&t);
-	std::stringstream ss;
+	//std::stringstream ss;
 	ss << std::put_time(&tm, "bkp_%Y%m%d_%H-%M-%S_");
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	wxBitmap bitmap;
@@ -572,9 +572,8 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 */
 void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 {
-	bool measure_first_zone = true;
-	m_bluriness = calcBlurriness(m_ocvmat, measure_first_zone);
-	m_calculateBluriness = true;
+	calculate_bluriness_first_zone = true;
+	m_bluriness = calcBlurriness(m_ocvmat, calculate_bluriness_first_zone);
 }
 
 
@@ -583,9 +582,8 @@ void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 */
 void imageFrame::OnCalculateBlurinessSecondZone(wxCommandEvent& event)
 {
-	bool measure_first_zone = false;
-	m_bluriness2 = calcBlurriness(m_ocvmat, measure_first_zone);
-	m_calculateBluriness2 = true;
+	calculate_bluriness_second_zone = true;
+	m_bluriness2 = calcBlurriness(m_ocvmat, calculate_bluriness_second_zone);
 }
 
 /*!
@@ -599,7 +597,6 @@ void imageFrame::OnSaveBluriness(wxCommandEvent& event) {
 * Saves the bluriness values for both zones into a text file, e.g. blur1=0.0001 blur2=0.002
 */
 void imageFrame::SaveBluriness() {
-	//m_imagemode = luminance;
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	//wxString path = m_directory + myParent->m_buttonPanel->m_idtext->GetLabel() + ".txt";
 
