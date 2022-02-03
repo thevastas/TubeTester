@@ -1,11 +1,11 @@
 #include "imageFrame.h"
 #include "MainWindow.h"
 BEGIN_EVENT_TABLE(imageFrame, wxFrame)
-EVT_BUTTON(controls::id::BIMAGECLOSE, imageFrame::CloseFrame)
-EVT_BUTTON(controls::id::BIMAGESAVE, imageFrame::QuickSaveSnapshot)
-EVT_BUTTON(controls::id::BMEASUREBLURINESS, imageFrame::OnCalculateBlurinessFirstZone)
-EVT_BUTTON(controls::id::BMEASUREBLURINESS2, imageFrame::OnCalculateBlurinessSecondZone)
-EVT_BUTTON(controls::id::BSAVEBLURINESS, imageFrame::OnSaveBluriness)
+EVT_BUTTON(controls::id::BIMAGECLOSE,			imageFrame::CloseFrame)
+EVT_BUTTON(controls::id::BIMAGESAVE,			imageFrame::QuickSaveSnapshot)
+EVT_BUTTON(controls::id::BMEASUREBLURINESS,		imageFrame::OnCalculateBlurinessFirstZone)
+EVT_BUTTON(controls::id::BMEASUREBLURINESS2,	imageFrame::OnCalculateBlurinessSecondZone)
+EVT_BUTTON(controls::id::BSAVEBLURINESS,		imageFrame::OnSaveBluriness)
 END_EVENT_TABLE()
 
 // A frame was retrieved from Camera.
@@ -60,17 +60,17 @@ wxThread::ExitCode CameraThread::Entry()
 		{
 			frame = new CameraFrame;
 			stopWatch.Start();
-			(*m_camera) >> frame->matBitmap; //retrieve frame from capture
-			frame->timeGet = stopWatch.Time(); //measure retrieval time
+			(*m_camera) >> frame->matBitmap; // retrieve the frame from capture
+			frame->timeGet = stopWatch.Time(); // measure retrieval time
 
-			if (!frame->matBitmap.empty()) //if successful, set payload
+			if (!frame->matBitmap.empty()) //if capturing the frame was successful, set the payload
 			{
 				wxThreadEvent* evt = new wxThreadEvent(wxEVT_IPCAMERA_FRAME);
 
 				evt->SetPayload(frame);
 				m_eventSink->QueueEvent(evt);
 			}
-			else // connection to camera lost
+			else // when the connection to camera is lost
 			{
 				m_eventSink->QueueEvent(new wxThreadEvent(wxEVT_IPCAMERA_EMPTY));
 				wxDELETE(frame);

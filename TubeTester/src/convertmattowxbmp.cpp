@@ -48,7 +48,9 @@ namespace
 
 #endif // #ifndef __WXMSW__
 
-// See the function description in the header file.
+/*!
+* See the function description in the header file.
+*/ 
 bool ConvertMatBitmapTowxBitmap(const cv::UMat matBitmap, wxBitmap& bitmap)
 {
     cv::Mat ocvbitmap = matBitmap.getMat(cv::ACCESS_READ);

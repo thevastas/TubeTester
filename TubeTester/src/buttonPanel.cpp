@@ -18,8 +18,8 @@ buttonPanel::buttonPanel(wxPanel* parent)
 	int bszy = 80;
 	m_parent = parent;
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
-	// First Row
 	
+	// First Row
 	m_idmantext = new wxTextCtrl (this, controls::id::IDMANTEXT, "", wxPoint(box + 2*(bszx+bsp), boy), wxSize(bszx, bszy));
 	m_bscanid = new wxButton(this, controls::id::BSCANID, "Scan ID", wxPoint(box, boy), wxSize(bszx, bszy));
 	m_bidman = new wxButton(this, controls::id::BIDMAN, "Manual ID", wxPoint((box + bszx+bsp),boy),wxSize(bszx,bszy));

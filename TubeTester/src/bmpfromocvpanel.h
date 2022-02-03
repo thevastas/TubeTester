@@ -16,29 +16,26 @@
 //#include "MainWindow.h"
 
 
-// This class displays a wxBitmap originated from OpenCV
-// and also the time it took to obtain, convert, and display the bitmap.
-//
-// The color or font of the overlay text can be changed by left (color)
-// or right (font) doubleclick on the panel.
+/*!
+*  This class displays a wxBitmap originated from OpenCV
+and also the time it took to obtain, convert, and display the bitmap.
 
+ The color or font of the overlay text can be changed by left (color)
+ or right (font) doubleclick on the panel.
+
+*/ 
 class wxBitmapFromOpenCVPanel : public wxScrolledCanvas
 {
 public:
-    //wxBitmapFromOpenCVPanel(wxWindow* parent);
     wxBitmapFromOpenCVPanel(wxFrame* parent);
     wxFrame* m_parent;
-
     bool SetBitmap(const wxBitmap& bitmap, const long timeGet, const long timeConvert);
-
     const wxBitmap& GetBitmap() { return m_bitmap; }
 
 private:
-    wxBitmap m_bitmap;
-    wxColour m_overlayTextColour;
-    wxFont   m_overlayFont;
-    long     m_timeGetCVBitmap{ 0 };   // time to obtain bitmap from OpenCV in ms
-    long     m_timeConvertBitmap{ 0 }; // time to convert Mat to wxBitmap in ms
+    wxBitmap m_bitmap; //!< Bitmap to be displayed on the imageframe
+    long     m_timeGetCVBitmap{ 0 }; //!< Time to obtain bitmap from OpenCV in ms
+    long     m_timeConvertBitmap{ 0 }; //!< Time to convert Mat to wxBitmap in ms
 
     wxSize DoGetBestClientSize() const override;
 

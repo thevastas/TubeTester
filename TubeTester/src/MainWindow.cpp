@@ -88,12 +88,8 @@ MainWindow::MainWindow(wxWindow* parent,
     m_buttonPanel = new buttonPanel(m_parent);
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
 
-
-
     SetMinClientSize(FromDIP(wxSize(580, 1000)));
     SetSize(FromDIP(wxSize(580, 1000)));
-       
-    
 }
 
 
