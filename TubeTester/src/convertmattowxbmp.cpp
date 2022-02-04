@@ -9,22 +9,21 @@
 
 #include <wx/wx.h>
 #include <wx/rawbmp.h>
-
 #include <opencv2/core/mat.hpp>
-
 #include "convertmattowxbmp.h"
 
 #ifdef __WXMSW__
 
 namespace
 {
-
-    // Version optimized for Microsoft Windows.
-    // matBitmap must be continous and matBitmap.cols % 4 must equal 0
-    // as SetDIBits() requires the DIB rows to be DWORD-aligned.
-    // Should not be called directly but only from ConvertMatBitmapTowxBitmap()
-    // which does all the necessary debug checks.
-    bool ConvertMatBitmapTowxBitmapMSW(const cv::Mat matBitmap, wxBitmap& bitmap)
+    /*!
+     Version optimized for Microsoft Windows.
+     matBitmap must be continous and matBitmap.cols % 4 must equal 0
+     as SetDIBits() requires the DIB rows to be DWORD-aligned.
+     Should not be called directly but only from ConvertMatBitmapTowxBitmap()
+     which does all the necessary debug checks.
+    */
+        bool ConvertMatBitmapTowxBitmapMSW(const cv::Mat matBitmap, wxBitmap& bitmap)
     {
         const HDC  hScreenDC = ::GetDC(nullptr);
         BITMAPINFO bitmapInfo{ 0 };
@@ -48,9 +47,7 @@ namespace
 
 #endif // #ifndef __WXMSW__
 
-/*!
-* See the function description in the header file.
-*/ 
+
 bool ConvertMatBitmapTowxBitmap(const cv::UMat matBitmap, wxBitmap& bitmap)
 {
     cv::Mat ocvbitmap = matBitmap.getMat(cv::ACCESS_READ);

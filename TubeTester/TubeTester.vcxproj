@@ -164,7 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
-    <ClCompile Include="src\bmpfromocvpanelcpp.cpp" />
+    <ClCompile Include="src\bmpfromocvpanel.cpp" />
     <ClCompile Include="src\buttonPanel.cpp" />
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\convertmattowxbmp.cpp" />

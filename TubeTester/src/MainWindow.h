@@ -26,6 +26,7 @@ class buttonPanel;
 class MainWindow : public wxFrame
 {
 public:
+    /*! Initializer for the main window, onto which all panels are drawn */
     MainWindow(wxWindow* parent,
         wxWindowID id,
         const wxString& title,
@@ -35,23 +36,60 @@ public:
         const wxString& name = wxASCII_STR(wxFrameNameStr));
 
     ~MainWindow();
-    
+
+    /*! Command event handler to retrieve a resolution image determined by the serial number of the tube */
     void OpenResolutionImage(wxCommandEvent& event);
+
+    /*! Command event handler to retrieve a defects image determined by the serial number of the tube */
     void OpenDefectsImage(wxCommandEvent& event);
+
+    /*! Command event to retrieve a 1300 nm wavelength intensity image determined by the serial number of the tube */
     void Open1300Image(wxCommandEvent& event);
+
+    /*! Command event to retrieve a 1500 nm wavelength intensity image determined by the serial number of the tube */
     void Open1500Image(wxCommandEvent& event);
+
+    /*! Command event to retrieve a 1900 nm wavelength intensity image determined by the serial number of the tube */
     void Open1900Image(wxCommandEvent& event);
+
+    /*! Command event to start capturing a resolution image for the tube determined by the serial number */
     void CaptureResolutionImage(wxCommandEvent& event);
+
+    /*! Command event to start capturing a defects image for the tube determined by the serial number */
     void CaptureDefectsImage(wxCommandEvent& event);
+
+    /*! Command event to start capturing a 1300 nm wavelength intensity image for the tube determined by the serial number */
     void Capture1300Image(wxCommandEvent& event);
+
+    /*! Command event to start capturing a 1500 nm wavelength intensity image for the tube determined by the serial number */
     void Capture1500Image(wxCommandEvent& event);
+
+    /*! Command event to start capturing a 1900 nm wavelength intensity image for the tube determined by the serial number */
     void Capture1900Image(wxCommandEvent& event);
-    void SetManualID(wxCommandEvent& event);
-    void ScanID(wxCommandEvent& event);
+
+    /*! Command event to save the luminance value that is entered into the user interface. The value is prepended to the top of a text file if several measurements are taken, e.g. lum=200 lum=198 */
     void SaveLuminance(wxCommandEvent& event);
+
+    /*! Retrieves the first luminance value that is found in the text file according to the serial number of the tube and displays it onto the user interface */
     void RetrieveLuminance(wxCommandEvent& event);
+
+    /*! Sets the serial number (ID) of the tube manually, using the value that was entered into the user interface */
+    void SetManualID(wxCommandEvent& event);
+
+    /*! TODO: automatic scanning of the QR code on the tube to retrieve the serial number */
+    void ScanID(wxCommandEvent& event);
+
+    /*! Command event to open the configuration window */
     void OpenConfiguration(wxCommandEvent& event);
+
+    /*!
+    * Sets the batch number of the tube manually, using the value that was entered into the user interface. Note: The batch is meant as the measurement batch, e.g.
+    * the batch number is the same for all tubes that were measured on one go/day,etc. - it is not the manufacturing batch. For old measurements of the pre-tubetester era
+    * batch number 0 is used.
+    */
     void SetManualBatch(wxCommandEvent& event);
+
+    /*! Enables or disables the user interface buttons depending if the files exist for retrieval */
     void UpdateButtons();
     
     enum ImageMode
@@ -76,8 +114,6 @@ public:
     int frameoriginy = 100;     //!< Vertical starting position of the configuration window
     int framesizex = 1067;      //!< Starting width of the configuration window
     int framesizey = 900;       //!< Starting heigth of the configuration window
-
-
 
     wxPanel* m_parent;
     buttonPanel* m_buttonPanel; //!< Panel in which all the buttons of the main window are stored

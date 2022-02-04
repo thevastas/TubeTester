@@ -71,7 +71,7 @@
     <ClCompile Include="src\buttonPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\bmpfromocvpanelcpp.cpp">
+    <ClCompile Include="src\bmpfromocvpanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\convertmattowxbmp.cpp">
