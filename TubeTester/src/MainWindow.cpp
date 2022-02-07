@@ -48,37 +48,14 @@ MainWindow::MainWindow(wxWindow* parent,
     wxWindow::SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
     cv::setBreakOnError(true);
 
+    ReadConfig();
 
-    wxFileName f(wxStandardPaths::Get().GetExecutablePath());
-    appPath=(f.GetPath() + _T("\\config.ini"));
 
     // main panel
     m_parent = new wxPanel(this, wxID_ANY);
     SetBackgroundColour(wxColor(32, 32, 32));
 
 
-
-    if (wxFileExists(appPath)) {
-        m_configfile->SetPath("/paths");
-
-            m_configfile->Read("defectspath", &directorydef);
-            m_configfile->Read("resolutionpath", &directoryres);
-            m_configfile->Read("luminancepath", &directoryLuminance);
-            m_configfile->Read("lamba1300path", &directory1300);
-            m_configfile->Read("lamba1500path", &directory1500);
-            m_configfile->Read("lamba1900path", &directory1900);
-
-            m_configfile->SetPath("/evaluation");
-            m_configfile->Read("scalingfactor", &scalingFactor);
-
-            m_configfile->SetPath("/misc");
-            m_configfile->Read("batch",&batchnumber);
-
-    }
-    else {
-        LOG(ERROR) << "File does not exist for writing:" << appPath;
-        wxMessageBox(wxT("The configuration file does not exist:") + appPath, wxT("Warning"), wxICON_WARNING);
-    }
 
     m_buttonPanel = new buttonPanel(m_parent);
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
@@ -92,6 +69,31 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::ReadConfig() {
+    wxFileName f(wxStandardPaths::Get().GetExecutablePath());
+    appPath = (f.GetPath() + _T("\\config.ini"));
+    if (wxFileExists(appPath)) {
+        m_configfile->SetPath("/paths");
+
+        m_configfile->Read("defectspath", &directorydef);
+        m_configfile->Read("resolutionpath", &directoryres);
+        m_configfile->Read("luminancepath", &directoryLuminance);
+        m_configfile->Read("lamba1300path", &directory1300);
+        m_configfile->Read("lamba1500path", &directory1500);
+        m_configfile->Read("lamba1900path", &directory1900);
+
+        m_configfile->SetPath("/evaluation");
+        m_configfile->Read("scalingfactor", &scalingFactor);
+
+        m_configfile->SetPath("/misc");
+        m_configfile->Read("batch", &batchnumber);
+
+    }
+    else {
+        LOG(ERROR) << "File does not exist for writing:" << appPath;
+        wxMessageBox(wxT("The configuration file does not exist:") + appPath, wxT("Warning"), wxICON_WARNING);
+    }
+}
 
 void MainWindow::OpenResolutionImage(wxCommandEvent& event) {
     m_imagemode = ResolutionImage;
@@ -210,6 +212,7 @@ void MainWindow::ScanID(wxCommandEvent& event) {
 }
 
 void MainWindow::OpenConfiguration(wxCommandEvent& event) {
+    ReadConfig();
     m_configwindow = new config(m_parent, "Configuration");
     m_configwindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
     m_configwindow->Show();

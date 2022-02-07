@@ -79,6 +79,9 @@ public:
     /*! TODO: automatic scanning of the QR code on the tube to retrieve the serial number */
     void ScanID(wxCommandEvent& event);
 
+    /*! Reads the configuration file and sets the correct paths of image directories */
+    void ReadConfig();
+
     /*! Command event to open the configuration window */
     void OpenConfiguration(wxCommandEvent& event);
 
