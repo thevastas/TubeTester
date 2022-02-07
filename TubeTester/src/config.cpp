@@ -95,6 +95,7 @@ void config::Save(wxCommandEvent& event) {
 		myParent->m_configfile->Flush();
 		wxMessageBox(wxT("Settings saved to: ")+ myParent->appPath, wxT("Warning"), wxICON_WARNING);
 		myParent->ReadConfig();
+		myParent->UpdateButtons();
 	
 
 }
