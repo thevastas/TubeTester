@@ -563,6 +563,7 @@ void imageFrame::OnCalculateBlurinessSecondZone(wxCommandEvent& event)
 
 void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 {
+
 	auto t = std::time(nullptr);
 	auto tm = *std::localtime(&t);
 	//std::stringstream ss;
@@ -570,7 +571,7 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	wxBitmap bitmap;
 	bitmap = m_bitmapPanel->GetBitmap();
-	wxString path = m_directory + myParent->m_buttonPanel->m_idtext->GetLabel() + ".jpg";
+	wxString path = m_directory + wxString::Format(wxT("%i/"), myParent->batchnumber) + myParent->m_buttonPanel->m_idtext->GetLabel() + ".jpg";
 	if (wxFileExists(path)) {
 		wxRenameFile(path, m_directory + ss.str() + myParent->m_buttonPanel->m_idtext->GetLabel() + ".jpg");
 	}
