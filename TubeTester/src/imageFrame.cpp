@@ -6,6 +6,7 @@ EVT_BUTTON(controls::id::BIMAGESAVE,			imageFrame::QuickSaveSnapshot)
 EVT_BUTTON(controls::id::BMEASUREBLURINESS,		imageFrame::OnCalculateBlurinessFirstZone)
 EVT_BUTTON(controls::id::BMEASUREBLURINESS2,	imageFrame::OnCalculateBlurinessSecondZone)
 EVT_BUTTON(controls::id::BSAVEBLURINESS,		imageFrame::OnSaveBluriness)
+EVT_BUTTON(controls::id::BFINDOUTLINE,			imageFrame::OnFindOutline)
 END_EVENT_TABLE()
 
 // A frame was retrieved from Camera.
@@ -113,6 +114,11 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
 	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
 
+	if (myParent->m_imagemode == myParent->DefectsVideo) {
+		m_bfindcircle = new wxButton(this, controls::id::BFINDOUTLINE, "Find Circle", wxPoint(300, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bfindcircle, 0, wxEXPAND | wxALL, 5);
+	}
+
 	if (myParent->m_imagemode == myParent->ResolutionVideo) {
 		m_bcalculateBluriness = new wxButton(this, controls::id::BMEASUREBLURINESS, "Bluriness 1 Zone", wxPoint(300, 0), wxSize(300, 60));
 		sizerButtons->Add(m_bcalculateBluriness, 0, wxEXPAND | wxALL, 5);
@@ -213,6 +219,10 @@ wxBitmap imageFrame::ConvertMatToBitmap(const cv::UMat matBitmap, long& timeConv
 
 void imageFrame::SetImage(wxString id)
 {
+	cv::UMat capumat;
+	cv::UMat capumat2;
+	cv::Mat cap_gray;
+	cv::UMat cap_color; 
 	// warning add batch number
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	//wxString path = m_directory+"/"+ wxString::Format(wxT("%i"), myParent->batchnumber)+"/" + id + ".jpg";
@@ -220,13 +230,15 @@ void imageFrame::SetImage(wxString id)
 	long timeGet = 0;
 	cap = cv::imread(id.ToStdString());
 
-	cv::UMat capumat;
-	cv::UMat capumat2;
-	cv::Mat cap2;
-	cv::Mat cap3;
-	cv::cvtColor(cap, cap2, cv::COLOR_BGR2GRAY);
+	if (cap.empty()) {
+		wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
+		return;
+	}
+
+
+	cv::cvtColor(cap, cap_gray, cv::COLOR_BGR2GRAY);
 	
-	cap2.copyTo(capumat);
+	cap_gray.copyTo(capumat);
 	// Add text and area of interest
 	if (myParent->m_imagemode == myParent->ResolutionImage) {
 		cv::rectangle(cap, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
@@ -247,10 +259,18 @@ void imageFrame::SetImage(wxString id)
 		cv::putText(cap, cv::format("Circle Intensity: %E", m_csumintensity), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
 	}
 	
-	if (cap.empty()) {
-		wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
-		return;
+	if (myParent->m_imagemode == myParent->DefectsImage) {
+		cap.copyTo(cap_color);
+		if (FindCircleCenter(cap_color)) {
+			m_isCircleDrawn = true;
+			cap_umat = DrawCircles(cap_color);
+			cap_umat.copyTo(cap);
+		}
+		else wxMessageBox(wxT("The tube's outline was not found"), wxT("Warning"), wxICON_WARNING);
+		//cap.copyTo(cap_umat);
+
 	}
+
 	cap.convertTo(m_ocvmat, CV_8UC3);
 	wxBitmap bitmap = ConvertMatToBitmap(m_ocvmat, timeConvert);
 	if (bitmap.IsOk()) {
@@ -373,6 +393,10 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 		}
 	}
 
+	if (myParent->m_imagemode == myParent->DefectsVideo && m_isCircleDrawn) {
+		m_ocvmat = DrawCircles(m_ocvmat);
+	}
+
 	if (myParent->m_imagemode == myParent->ResolutionVideo) {
 		cv::rectangle(m_ocvmat, cv::Point(446, 222), cv::Point(2146, 1722), cv::Scalar(255, 255, 0), 5);
 		cv::rectangle(m_ocvmat, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
@@ -450,6 +474,36 @@ float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
 	return cv::sum(resized)[0];
 }
 
+bool imageFrame::FindCircleCenter(const cv::UMat& src) {
+	bool great_success = false;
+	cvtColor(src, m_grayscale_image, cv::COLOR_BGR2GRAY);
+	m_grayscale_image.copyTo(m_blurred_image);
+	cv::medianBlur(m_blurred_image, m_blurred_image, 5);
+	std::vector<cv::Vec3f> circles;
+	cv::HoughCircles(m_blurred_image, circles, cv::HOUGH_GRADIENT, 1,
+		m_blurred_image.rows / 4,  // change this value to detect circles with different distances to each other
+		25, 40, 900, 2000 // change the last two parameters
+   // (min_radius & max_radius) to detect larger circles
+	);
+	if (true) {
+		m_circles = circles[0];
+		great_success = true;
+	}
+	
+	return great_success;
+}
+
+cv::UMat imageFrame::DrawCircles(const cv::UMat& src) { // TODO: use this function on the live view instead
+	cv::Point center = cv::Point(m_circles[0], m_circles[1]);
+	cv::circle(src, center, 5, cv::Scalar(0, 100, 100), 3, cv::LINE_AA); // Center of the circle
+	int radius = m_circles[2];
+	cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA); // outline of the circle
+	//TODO incorporate px/mm value here
+	cv::circle(src, center, 569, cv::Scalar(0, 0, 255), 3); // circle 12 mm zone
+	cv::circle(src, center, 911, cv::Scalar(255, 0, 0), 3); // circle 19.2 mm zone
+	return src;
+}
+
 void imageFrame::OnSaveBluriness(wxCommandEvent& event) {
 	SaveBluriness();
 }
@@ -471,13 +525,11 @@ void imageFrame::SaveBluriness() {
 	blurinessFile->Close();
 }
 
-
 void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 {
 	calculate_bluriness_first_zone = true;
 	m_bluriness = calcBlurriness(m_ocvmat, calculate_bluriness_first_zone);
 }
-
 
 void imageFrame::OnCalculateBlurinessSecondZone(wxCommandEvent& event)
 {
@@ -522,6 +574,19 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 	m_imagesaved = true;
 }
 
+void imageFrame::OnFindOutline(wxCommandEvent& event) {
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	if (myParent->m_imagemode == myParent->DefectsVideo) {
+		m_ocvmat.copyTo(cap_umat);
+	}
+	if (myParent->m_imagemode == myParent->DefectsImage) {
+		cap.copyTo(cap_umat);
+	}
+	//cap.copyTo(cap_umat); //m_ocvmat
+	if(FindCircleCenter(cap_umat)) m_isCircleDrawn = true;
+	else wxMessageBox(wxT("The tube's outline was not found"), wxT("Warning"), wxICON_WARNING);
+}
+
 void imageFrame::Clear()
 {
 	DeleteCameraThread();
@@ -534,5 +599,5 @@ void imageFrame::Clear()
 
 	m_mode = Empty;
 	m_bitmapPanel->SetBitmap(wxBitmap(), 0, 0);
-
+	m_isCircleDrawn = false;
 }

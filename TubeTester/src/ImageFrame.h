@@ -73,6 +73,20 @@ public:
 	*/
 	float calcSumIntensity(const cv::UMat& src, bool measuring_total);
 
+	/*!
+	@brief Finds the center of the tube from the edges of the glass by using the Hough Line Transform
+	@param[in] src OpenCV Mat image
+	@return True if a circle was found, False otherwise
+	*/
+	bool FindCircleCenter(const cv::UMat& src);
+
+	/*!
+	@brief Draws defect zones
+	@param[in] src OpenCV UMat image
+	@return OpenCV UMat image with drawn circles
+	*/
+	cv::UMat DrawCircles(const cv::UMat& src);
+
 	/*! Command event for the saving of the bluriness value into a text file */
 	void OnSaveBluriness(wxCommandEvent& event);
 
@@ -87,6 +101,9 @@ public:
 
 	/*! Saves a JPEG snapshot of the displayed image. The filename is chosen by combining the batch number and the serial number of the tube and saved in the directory related to the measurement type, e.g. "defects", "resolution" */
 	void QuickSaveSnapshot(wxCommandEvent& event);
+
+	/*! Command function to find the outline circle of the tube */
+	void OnFindOutline(wxCommandEvent& event);
 
 	/*! Clears the image and deletes the camera thread */
 	void Clear();
@@ -116,10 +133,12 @@ public:
 	wxButton* m_bimagesave;				//!< Button for saving the image into a respective directory
 	wxButton* m_bcalculateBluriness;	//!< Button for calculating the bluriness in the first zone
 	wxButton* m_bcalculateBluriness2;	//!< Button for calculating the bluriness in the second zone (whole image)
+	wxButton* m_bfindcircle;			//!< Button for finding the outline of the tube in the defect measurement mode
 
 	wxString m_directory;				//!< General holder for the path of an image, the value to which is given after determining the measurement type
 
 	cv::Mat cap;						//!< Mat Frame that was captured by OpenCV
+	cv::UMat cap_umat;
 	cv::UMat m_ocvmat;					//!< Frame converted to UMat with CV_8UC3 format (8 bit, unsigned, 3 channels)
 
 	long m_timeConvert = 0;				//!< Time needed for the conversion from OpenCV frame to a WxBitmap
@@ -132,6 +151,11 @@ public:
 	float m_csumintensity;				//!< Intensity sum of pixels within the defined circle of the image, used for sensitivity measurements
 	int framecounter;					//!< Iteration variable to count the number of frames passed
 	int sumcircleradius = 800;			//!< Radius of the circle within which the pixels are supposed to be summed, used for sensitivity measurements
+
+	cv::Mat m_blurred_image;			//!< Blurred image that is used for the Hough Circle detection
+	cv::Mat m_grayscale_image;			//!< Grayscale image that is used for the Hough Circle detection
+	cv::Vec3i m_circles;				//!< Coordinates and the radius of the tube's circle
+	bool m_isCircleDrawn = false;		//!< boolean variable for choosing if the outlining circle should be drawn in live view
 
 	wxDECLARE_EVENT_TABLE();
 };
