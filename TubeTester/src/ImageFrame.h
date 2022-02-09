@@ -65,6 +65,9 @@ public:
 	*/
 	float calcBlurriness(const cv::UMat& src, bool measuring_first_zone);
 
+	/*! Command event function for the calculation of the intensity of the image. Used to determine the sensitivity of the tubes at different wavelengths */
+	void OnCalculateSumIntensity(wxCommandEvent& event);
+
 	/*!
 	@brief Calculates the intensity sum of the circle of interest in an image (if measuring_total is false), calculates the total intensity of the image otherwise
 	@param[in] src OpenCV UMat used for calculation
@@ -134,6 +137,7 @@ public:
 	wxButton* m_bcalculateBluriness;	//!< Button for calculating the bluriness in the first zone
 	wxButton* m_bcalculateBluriness2;	//!< Button for calculating the bluriness in the second zone (whole image)
 	wxButton* m_bfindcircle;			//!< Button for finding the outline of the tube in the defect measurement mode
+	wxButton* m_bcalculateintensity;	//!< Button for calculating the intensity of the whole image or it's region of interest
 
 	wxString m_directory;				//!< General holder for the path of an image, the value to which is given after determining the measurement type
 
@@ -149,6 +153,7 @@ public:
 	float m_bluriness2;					//!< Bluriness value for the second zone (whole image), used for resolution measurements
 	float m_tsumintensity;				//!< Total intensity sum of the image (whole image), used for sensitivity measurements
 	float m_csumintensity;				//!< Intensity sum of pixels within the defined circle of the image, used for sensitivity measurements
+	bool calculate_sum_intensity = false;	//!< Boolean variable for choosing if the intensity of the image should be calculated
 	int framecounter;					//!< Iteration variable to count the number of frames passed
 	int sumcircleradius = 800;			//!< Radius of the circle within which the pixels are supposed to be summed, used for sensitivity measurements
 

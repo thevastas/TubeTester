@@ -7,6 +7,7 @@ EVT_BUTTON(controls::id::BMEASUREBLURINESS,		imageFrame::OnCalculateBlurinessFir
 EVT_BUTTON(controls::id::BMEASUREBLURINESS2,	imageFrame::OnCalculateBlurinessSecondZone)
 EVT_BUTTON(controls::id::BSAVEBLURINESS,		imageFrame::OnSaveBluriness)
 EVT_BUTTON(controls::id::BFINDOUTLINE,			imageFrame::OnFindOutline)
+EVT_BUTTON(controls::id::BCALCULATEINTENSITY,	imageFrame::OnCalculateSumIntensity)
 END_EVENT_TABLE()
 
 // A frame was retrieved from Camera.
@@ -113,6 +114,11 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
 	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
+
+	if (myParent->m_imagemode == myParent->l1300Video || myParent->m_imagemode == myParent->l1500Video || myParent->m_imagemode == myParent->l1900Video) {
+		m_bcalculateintensity = new wxButton(this, controls::id::BCALCULATEINTENSITY, "Calculate intensity", wxPoint(300, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bcalculateintensity, 0, wxEXPAND | wxALL, 5);
+	}
 
 	if (myParent->m_imagemode == myParent->DefectsVideo) {
 		m_bfindcircle = new wxButton(this, controls::id::BFINDOUTLINE, "Find Circle", wxPoint(300, 0), wxSize(300, 60));
@@ -393,6 +399,18 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 		}
 	}
 
+	if (calculate_sum_intensity) {
+		//cv::putText(m_ocvmat, cv::format("Intensity: %E, %E", m_tsumintensity, m_csumintensity), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+		cv::putText(m_ocvmat, cv::format("Total Intensity: %E", m_tsumintensity), cv::Point(100, 200), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(255, 255, 0), 5);
+		cv::putText(m_ocvmat, cv::format("Circle Intensity: %E", m_csumintensity), cv::Point(100, 300), cv::FONT_HERSHEY_PLAIN, 8, cv::Scalar(0, 0, 255), 5);
+		
+		framecounter++;
+		if (framecounter > 8) {
+			framecounter = 0;
+			calculate_sum_intensity = false;
+		}
+	}
+
 	if (myParent->m_imagemode == myParent->DefectsVideo && m_isCircleDrawn) {
 		m_ocvmat = DrawCircles(m_ocvmat);
 	}
@@ -455,6 +473,12 @@ float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 	return static_cast<float>(1. / (sumSq / src.size().area() + 1e-6));
 }
 
+void imageFrame::OnCalculateSumIntensity(wxCommandEvent& event) {
+	m_tsumintensity = calcSumIntensity(m_ocvmat, true);
+	m_csumintensity = calcSumIntensity(m_ocvmat, false);
+	calculate_sum_intensity = true;
+}
+
 float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
 {
 	float sum;
@@ -462,7 +486,7 @@ float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
 	if (!measuring_total) {
 		cv::Mat mask = cv::Mat::zeros(src.size(), CV_8UC1);
 		cv::Mat masked;
-		cv::circle(mask, cv::Point(1296, 972), sumcircleradius, 255, -1);
+		cv::circle(mask, cv::Point(1296, 972), sumcircleradius-5, 255, -1); // subtract 5 from the sum radius to omit the red marking circle
 		
 		src.copyTo(resized, mask);
 	}
@@ -495,12 +519,12 @@ bool imageFrame::FindCircleCenter(const cv::UMat& src) {
 
 cv::UMat imageFrame::DrawCircles(const cv::UMat& src) { // TODO: use this function on the live view instead
 	cv::Point center = cv::Point(m_circles[0], m_circles[1]);
-	cv::circle(src, center, 5, cv::Scalar(0, 100, 100), 3, cv::LINE_AA); // Center of the circle
+	cv::circle(src, center, 5, cv::Scalar(0, 100, 100), 3, cv::LINE_AA); // Draw center of the circle
 	int radius = m_circles[2];
-	cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA); // outline of the circle
-	//TODO incorporate px/mm value here
-	cv::circle(src, center, 569, cv::Scalar(0, 0, 255), 3); // circle 12 mm zone
-	cv::circle(src, center, 911, cv::Scalar(255, 0, 0), 3); // circle 19.2 mm zone
+	cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA); // Draw outline of the circle
+	//TODO: incorporate px/mm value here
+	cv::circle(src, center, 569, cv::Scalar(0, 0, 255), 3); // Draw the circle of 12 mm zone
+	cv::circle(src, center, 911, cv::Scalar(255, 0, 0), 3); // Draw the circle of 19.2 mm zone
 	return src;
 }
 
