@@ -5,7 +5,7 @@ EVT_BUTTON(controls::id::BIMAGECLOSE,			imageFrame::CloseFrame)
 EVT_BUTTON(controls::id::BIMAGESAVE,			imageFrame::QuickSaveSnapshot)
 EVT_BUTTON(controls::id::BMEASUREBLURINESS,		imageFrame::OnCalculateBlurinessFirstZone)
 EVT_BUTTON(controls::id::BMEASUREBLURINESS2,	imageFrame::OnCalculateBlurinessSecondZone)
-EVT_BUTTON(controls::id::BSAVEBLURINESS,		imageFrame::OnSaveBluriness)
+//EVT_BUTTON(controls::id::BSAVEBLURINESS,		imageFrame::OnSaveBluriness)
 EVT_BUTTON(controls::id::BFINDOUTLINE,			imageFrame::OnFindOutline)
 EVT_BUTTON(controls::id::BCALCULATEINTENSITY,	imageFrame::OnCalculateSumIntensity)
 END_EVENT_TABLE()
@@ -132,11 +132,10 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 		sizerButtons->Add(m_bcalculateBluriness2, 0, wxEXPAND | wxALL, 5);
 	}
 
-	if (myParent->m_imagemode == myParent->ResolutionImage) {
-		m_bcalculateBluriness = new wxButton(this, controls::id::BSAVEBLURINESS, "Save bluriness data", wxPoint(600, 0), wxSize(300, 60));
-		sizerButtons->Add(m_bcalculateBluriness, 0, wxEXPAND | wxALL, 5);
-		//SaveBluriness();
-	}
+	//if (myParent->m_imagemode == myParent->ResolutionImage) {
+	//	//m_bcalculateBluriness = new wxButton(this, controls::id::BSAVEBLURINESS, "Save bluriness data", wxPoint(600, 0), wxSize(300, 60));
+	//	//sizerButtons->Add(m_bcalculateBluriness, 0, wxEXPAND | wxALL, 5);
+	//}
 	sizer->Add(sizerButtons);
 	sizer->Add(m_bitmapPanel, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5);
 	this->SetSizer(sizer);
@@ -473,6 +472,22 @@ float imageFrame::calcBlurriness(const cv::UMat& src, bool measuring_first_zone)
 	return static_cast<float>(1. / (sumSq / src.size().area() + 1e-6));
 }
 
+void imageFrame::SaveLambda(wxString lambda) {
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+
+	wxString path = m_directory + wxString::Format(wxT("%i/"), myParent->batchnumber) + myParent->m_buttonPanel->m_idtext->GetLabel() + "_l" + lambda + ".txt";
+
+	wxTextFile* blurinessFile = new wxTextFile(path);
+	if (!wxFileExists(path)) {
+		blurinessFile->Create();
+	}
+	blurinessFile->Open();
+	blurinessFile->AddLine("sens_circle=" + std::to_string(m_csumintensity));
+	blurinessFile->AddLine("sens_total=" + std::to_string(m_tsumintensity));
+	blurinessFile->Write();
+	blurinessFile->Close();
+}
+
 void imageFrame::OnCalculateSumIntensity(wxCommandEvent& event) {
 	m_tsumintensity = calcSumIntensity(m_ocvmat, true);
 	m_csumintensity = calcSumIntensity(m_ocvmat, false);
@@ -497,6 +512,8 @@ float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
 
 	return cv::sum(resized)[0];
 }
+
+
 
 bool imageFrame::FindCircleCenter(const cv::UMat& src) {
 	bool great_success = false;
@@ -528,9 +545,9 @@ cv::UMat imageFrame::DrawCircles(const cv::UMat& src) { // TODO: use this functi
 	return src;
 }
 
-void imageFrame::OnSaveBluriness(wxCommandEvent& event) {
-	SaveBluriness();
-}
+//void imageFrame::OnSaveBluriness(wxCommandEvent& event) {
+//	SaveBluriness();
+//}
 
 void imageFrame::SaveBluriness() {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
@@ -548,6 +565,7 @@ void imageFrame::SaveBluriness() {
 	blurinessFile->Write();
 	blurinessFile->Close();
 }
+
 
 void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 {
@@ -588,12 +606,15 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 		break;
 	case myParent->l1300Video:
 		myParent->m_buttonPanel->m_bretlam1300->Enable();
+		SaveLambda("1300");
 		break;
 	case myParent->l1500Video:
 		myParent->m_buttonPanel->m_bretlam1500->Enable();
+		SaveLambda("1500");
 		break;
 	case myParent->l1900Video:
 		myParent->m_buttonPanel->m_bretlam1900->Enable();
+		SaveLambda("1900");
 		break;
 	}
 	m_imagesaved = true;

@@ -65,6 +65,11 @@ public:
 	*/
 	float calcBlurriness(const cv::UMat& src, bool measuring_first_zone);
 
+	/*! 
+	@brief Saves the value of sensitivity at a specific wavelength for the region of interest and the whole image into a text file, e.g. sens_circle=0.0001 sens_total=0.002
+	@param[in] wavelength value in nanometers, e.g. 1300, 1500, 1900 */
+	void SaveLambda(wxString lambda);
+
 	/*! Command event function for the calculation of the intensity of the image. Used to determine the sensitivity of the tubes at different wavelengths */
 	void OnCalculateSumIntensity(wxCommandEvent& event);
 
@@ -91,7 +96,7 @@ public:
 	cv::UMat DrawCircles(const cv::UMat& src);
 
 	/*! Command event for the saving of the bluriness value into a text file */
-	void OnSaveBluriness(wxCommandEvent& event);
+	//void OnSaveBluriness(wxCommandEvent& event);
 
 	/*! Saves the bluriness values for both zones into a text file, e.g. blur1=0.0001 blur2=0.002 */
 	void SaveBluriness();
