@@ -6,7 +6,7 @@
 class config : public wxFrame
 {
 public:
-	config(wxPanel* parent, wxString title);
+	config(wxPanel* parent, wxString title);//!< Initializer for configuration window, which is used to set paths for the directories and other settings used for evaluation
 
 	wxStaticText* m_pathresolutiontext; //!< Text displaying the "resolution path" guider
 	wxTextCtrl* m_pathresolution; //!< Textbox for displaying or changing the path of the directory for resolution measurements

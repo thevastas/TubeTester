@@ -53,4 +53,7 @@ public:
 	// Ninth row
 	wxButton* m_bmeaslam1900; //!< Button for opening the measurement window for the sensitivity of 1900 nm wavelenght
 	wxButton* m_bretlam1900; //!< Button for retrieving the recorded image for the sensitivity of 1900 nm wavelenght
+
+	// Tenth row
+	wxButton* m_badvanced; //!< Button for opening the advanced functionality window
 };

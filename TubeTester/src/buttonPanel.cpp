@@ -7,7 +7,7 @@
 * Draws the interface for the main window: buttons, textboxes
 */
 buttonPanel::buttonPanel(wxPanel* parent)
-	: wxPanel(parent, -1, wxPoint(10, 10), wxSize(560, 980))
+	: wxPanel(parent, -1, wxPoint(10, 10), wxSize(560, 1100))
 {
 
 	
@@ -59,4 +59,7 @@ buttonPanel::buttonPanel(wxPanel* parent)
 	// Ninth Row
 	m_bmeaslam1900 = new wxButton(this, controls::id::BMEASLAM1900, "1900 nm", wxPoint(box,						boy + 8 * (bszy + bsp)), wxSize(bszx, bszy));
 	m_bretlam1900 = new wxButton(this, controls::id::BRETLAM1900, "Retrieve", wxPoint(box + 2 * (bszx + bsp),	boy + 8 * (bszy + bsp)), wxSize(bszx, bszy));
+
+	// Tenth Row
+	m_badvanced = new wxButton(this, controls::id::BADVANCED, "Advanced functions", wxPoint(box, boy + 9 * (bszy + bsp)), wxSize(2*bszx+bsp, bszy));
 }

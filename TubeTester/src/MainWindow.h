@@ -9,6 +9,7 @@
 #include <wx/fileconf.h>
 #include "ImageFrame.h"
 #include "buttonPanel.h"
+#include "advanced.h"
 
 class wxBitmapFromOpenCVPanel;
 
@@ -85,6 +86,9 @@ public:
     /*! Command event to open the configuration window */
     void OpenConfiguration(wxCommandEvent& event);
 
+    /*! Command event to open the advanced functionality window */
+    void OpenAdvanced(wxCommandEvent& event);
+
     /*!
     * Sets the batch number of the tube manually, using the value that was entered into the user interface. Note: The batch is meant as the measurement batch, e.g.
     * the batch number is the same for all tubes that were measured on one go/day,etc. - it is not the manufacturing batch. For old measurements of the pre-tubetester era
@@ -131,7 +135,8 @@ public:
     imageFrame* m_cap1300;          //!< imageframe instance (window) for recording of the 1300 nm wavelength sensitivity image
     imageFrame* m_cap1500;          //!< imageframe instance (window) for recording of the 1500 nm wavelength sensitivity image
     imageFrame* m_cap1900;          //!< imageframe instance (window) for recording of the 1900 nm wavelength sensitivity image
-    config* m_configwindow;
+    config* m_configwindow;         //!< config instance (window) for setting the configuration of the application
+    advanced* m_advancedwindow;     //!< advanced instance (window) for advanced functionality
 
     wxFileConfig* m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE); //!< wxFileConfig instance for the local text config file
     wxString appPath; //!< String into which the application path is saved

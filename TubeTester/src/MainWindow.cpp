@@ -31,6 +31,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_BUTTON(controls::id::BMEASLUM,      MainWindow::SaveLuminance)
     EVT_BUTTON(controls::id::BRETLUM,       MainWindow::RetrieveLuminance)
     EVT_BUTTON(controls::id::BCONFIG,       MainWindow::OpenConfiguration)
+    EVT_BUTTON(controls::id::BADVANCED,     MainWindow::OpenAdvanced)
 END_EVENT_TABLE()
 
 
@@ -60,8 +61,8 @@ MainWindow::MainWindow(wxWindow* parent,
     m_buttonPanel = new buttonPanel(m_parent);
     m_buttonPanel->SetBackgroundColour(wxColor(64, 64, 64));
 
-    SetMinClientSize(FromDIP(wxSize(580, 1000)));
-    SetSize(FromDIP(wxSize(580, 1000)));
+    SetMinClientSize(FromDIP(wxSize(580, 1100)));
+    SetSize(FromDIP(wxSize(580, 1100)));
 }
 
 
@@ -218,6 +219,11 @@ void MainWindow::OpenConfiguration(wxCommandEvent& event) {
     m_configwindow->Show();
 }
 
+void MainWindow::OpenAdvanced(wxCommandEvent& event) {
+    m_advancedwindow = new advanced(m_parent, "Advanced functions");
+    m_advancedwindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_advancedwindow->Show();
+}
 
 void MainWindow::SetManualBatch(wxCommandEvent& event) {
     m_buttonPanel->m_batchtext->SetLabel(m_buttonPanel->m_batchmantext->GetValue());

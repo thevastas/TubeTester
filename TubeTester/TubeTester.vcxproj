@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="src\advanced.h" />
     <ClInclude Include="src\App.h" />
     <ClInclude Include="src\bmpfromocvpanel.h" />
     <ClInclude Include="src\buttonPanel.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="TubeTester.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\advanced.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\bmpfromocvpanel.cpp" />
     <ClCompile Include="src\buttonPanel.cpp" />
