@@ -141,12 +141,13 @@ public:
     wxFileConfig* m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE); //!< wxFileConfig instance for the local text config file
     wxString appPath; //!< String into which the application path is saved
 
-    wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/"; //!< Default directory for the resolution images (possible duplicate, also is retrieved from config file)
-    wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/"; //!< Default directory for the defects images (possible duplicate, also is retrieved from config file)
-    wxString directory1300 = "D:/ADOS-Tech/metrology - Documents/img/1300/"; //!< Default directory for the 1300 nm sensitivity images (possible duplicate, also is retrieved from config file)
-    wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/"; //!< Default directory for the 1500 nm sensitivity images (possible duplicate, also is retrieved from config file)
-    wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/"; //!< Default directory for the 1900 nm sensitivity images (possible duplicate, also is retrieved from config file)
-    wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/"; //!< Default directory for the luminance values (possible duplicate, also is retrieved from config file)
+    wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/"; //!< Default directory for the resolution images
+    wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/"; //!< Default directory for the defects images
+    wxString directory1300 = "D:/ADOS-Tech/metrology - Documents/img/1300/"; //!< Default directory for the 1300 nm sensitivity images
+    wxString directory1500 = "D:/ADOS-Tech/metrology - Documents/img/1500/"; //!< Default directory for the 1500 nm sensitivity images
+    wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/"; //!< Default directory for the 1900 nm sensitivity images
+    wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/"; //!< Default directory for the luminance values
+    wxString directoryAnalysis = "D:/ADOS-Tech/metrology - Documents/img/analysis/"; //!< Default directory for the analysis files
 
     wxString lumfile;   //!< Full path to the luminance file
     wxString resfile;   //!< Full path to the resolution image file

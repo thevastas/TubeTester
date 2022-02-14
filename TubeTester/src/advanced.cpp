@@ -17,9 +17,9 @@ advanced::advanced(wxPanel* parent, wxString title)
 
 void advanced::OnFindLambda1300(wxCommandEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
-	pathlambda1300 = wxFindFirstFile(myParent->directory1300 + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber)); // Warning: add error handling if not found
-	pathlambda1300summaryCircle = "D:/ADOS-Tech/metrology - Documents/img/analysis/"+ wxString::Format(wxT("%i_sumcir.txt"), myParent->batchnumber); // Warning add analysis dir to config and hardcode
-	pathlambda1300summaryTotal = "D:/ADOS-Tech/metrology - Documents/img/analysis/" + wxString::Format(wxT("%i_sumtot.txt"), myParent->batchnumber); // Warning add analysis dir to config and hardcode
+	pathlambda1300 = wxFindFirstFile(myParent->directory1300 + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber));
+	pathlambda1300summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumcir.txt"), myParent->batchnumber);
+	pathlambda1300summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumtot.txt"), myParent->batchnumber);
 	lambda1300SummaryCircleFile = new wxTextFile(pathlambda1300summaryCircle);
 	lambda1300SummaryTotalFile = new wxTextFile(pathlambda1300summaryTotal);
 	
