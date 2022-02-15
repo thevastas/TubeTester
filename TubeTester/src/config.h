@@ -26,6 +26,9 @@ public:
 	wxStaticText* m_pathlumtext; //!< Text displaying the "luminance path" guider
 	wxTextCtrl* m_pathlum; //!< Textbox for displaying or changing the path of the directory for luminance measurements
 
+	wxStaticText* m_pathanatext; //!< Text displaying the "analysis path" guider
+	wxTextCtrl* m_pathana; //!< Textbox for displaying or changing the path of the directory for analysis files
+
 	wxStaticText* m_scalingfactortext; //!< Text displaying the "scaling factor" guider
 	wxTextCtrl* m_scalingfactor; //!< Textbox for displaying or chaning the scaling factor in px/mm
 

@@ -138,8 +138,8 @@ public:
     config* m_configwindow;         //!< config instance (window) for setting the configuration of the application
     advanced* m_advancedwindow;     //!< advanced instance (window) for advanced functionality
 
-    wxFileConfig* m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, appPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE); //!< wxFileConfig instance for the local text config file
-    wxString appPath; //!< String into which the application path is saved
+    wxFileConfig* m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, configPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE); //!< wxFileConfig instance for the local text config file
+    wxString configPath; //!< String into which the configuration file path is saved
 
     wxString directoryres = "D:/ADOS-Tech/metrology - Documents/img/resolution/"; //!< Default directory for the resolution images
     wxString directorydef = "D:/ADOS-Tech/metrology - Documents/img/defects/"; //!< Default directory for the defects images

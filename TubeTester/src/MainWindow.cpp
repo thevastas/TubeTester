@@ -72,8 +72,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::ReadConfig() {
     wxFileName f(wxStandardPaths::Get().GetExecutablePath());
-    appPath = (f.GetPath() + _T("\\config.ini"));
-    if (wxFileExists(appPath)) {
+    //configPath = (f.GetPath() + _T("\\config.ini"));
+    configPath = directoryAnalysis + _T("config.ini");
+    m_configfile = new wxFileConfig(wxEmptyString, wxEmptyString, configPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE); //!< wxFileConfig instance for the local text config file
+    if (wxFileExists(configPath)) {
         m_configfile->SetPath("/paths");
 
         m_configfile->Read("defectspath", &directorydef);
@@ -91,8 +93,20 @@ void MainWindow::ReadConfig() {
 
     }
     else {
-        LOG(ERROR) << "File does not exist for writing:" << appPath;
-        wxMessageBox(wxT("The configuration file does not exist:") + appPath, wxT("Warning"), wxICON_WARNING);
+        m_configfile->SetPath("/paths");
+        m_configfile->Write("defectspath", directorydef);
+        m_configfile->Write("resolutionpath", directoryres);
+        m_configfile->Write("luminancepath", directoryLuminance);
+        m_configfile->Write("lambda1300path", directory1300);
+        m_configfile->Write("lambda1500path", directory1500);
+        m_configfile->Write("lambda1900path", directory1900);
+        m_configfile->Write("analysispath", directoryAnalysis);
+        m_configfile->SetPath("/evaluation");
+        m_configfile->Write("scalingfactor", scalingFactor);
+        m_configfile->Flush();
+
+        LOG(ERROR) << "File does not exist for writing, initialized with default values:" << configPath;
+        wxMessageBox(wxT("The configuration file does not exist\n Initialized with default values:\n") + configPath, wxT("Warning"), wxICON_WARNING);
     }
 }
 
