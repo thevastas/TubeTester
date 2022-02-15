@@ -34,7 +34,7 @@ public:
 
 	wxButton* m_bconfigsave; //!< Button for saving the configuration to a text file
 
-	void Close(wxCloseEvent& event);
-	void Save(wxCommandEvent& event);
+	void Close(wxCloseEvent& event); //!< Close event that is executed upon closing the window
+	void Save(wxCommandEvent& event); //!< Command event for saving the configuration to a text file
 	wxDECLARE_EVENT_TABLE();
 };

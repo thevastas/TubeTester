@@ -35,7 +35,6 @@ void advanced::OnFindLambda1300(wxCommandEvent& event) {
 		lambda1300SummaryTotalFile->Create();
 		lambda1300SummaryTotalFile->Open();
 
-
 	while (!pathlambda1300.GetFullPath().empty())
 	{
 		lambdaFile = new wxTextFile(pathlambda1300.GetFullPath());
@@ -62,7 +61,6 @@ void advanced::OnFindLambda1300(wxCommandEvent& event) {
 			wxMessageBox(wxT("Files do not exist in the lambda measurement directory"), wxT("Warning"), wxICON_WARNING);
 			break;
 		}
-
 		pathlambda1300 = wxFindNextFile();
 	}
 
