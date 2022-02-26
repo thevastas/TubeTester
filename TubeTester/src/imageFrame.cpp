@@ -108,12 +108,22 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 
 	m_bitmapPanel = new wxBitmapFromOpenCVPanel(this);
 	m_bimageclose = new wxButton(this, controls::id::BIMAGECLOSE, "Close", wxPoint(0, 0), wxSize(300, 60));
-	m_bimagesave = new wxButton(this, controls::id::BIMAGESAVE, "Save", wxPoint(300, 0), wxSize(300, 60));
 
 	wxSizer* sizerButtons = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+
+	if (myParent->m_imagemode != myParent->qr) {
+		m_bimagesave = new wxButton(this, controls::id::BIMAGESAVE, "Save", wxPoint(300, 0), wxSize(300, 60));
+		sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
+	}
+	else {
+		m_breadqr = new wxButton(this, controls::id::BREADQR, "Read QR", wxPoint(300, 0), wxSize(300, 60));
+		sizerButtons->Add(m_breadqr, 0, wxEXPAND | wxALL, 5);
+	}
+
 	sizerButtons->Add(m_bimageclose, 0, wxEXPAND | wxALL, 5);
-	sizerButtons->Add(m_bimagesave, 0, wxEXPAND | wxALL, 5);
+	
 
 	if (myParent->m_imagemode == myParent->l1300Video || myParent->m_imagemode == myParent->l1500Video || myParent->m_imagemode == myParent->l1900Video) {
 		m_bcalculateintensity = new wxButton(this, controls::id::BCALCULATEINTENSITY, "Calculate intensity", wxPoint(300, 0), wxSize(300, 60));

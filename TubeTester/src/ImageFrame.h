@@ -139,6 +139,7 @@ public:
 	wxPanel* m_parent;
 	wxButton* m_bimageclose;			//!< Button for closing the imageframe window
 	wxButton* m_bimagesave;				//!< Button for saving the image into a respective directory
+	wxButton* m_breadqr;				//!< Button for reading the QR code of the tube
 	wxButton* m_bcalculateBluriness;	//!< Button for calculating the bluriness in the first zone
 	wxButton* m_bcalculateBluriness2;	//!< Button for calculating the bluriness in the second zone (whole image)
 	wxButton* m_bfindcircle;			//!< Button for finding the outline of the tube in the defect measurement mode

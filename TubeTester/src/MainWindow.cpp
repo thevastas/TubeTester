@@ -216,6 +216,7 @@ void MainWindow::RetrieveLuminance(wxCommandEvent& event) {
     }
 }
 
+
 void  MainWindow::SetManualID(wxCommandEvent& event) {
 
     m_buttonPanel->m_idtext->SetLabel(m_buttonPanel->m_idmantext->GetLineText(0));
@@ -223,7 +224,11 @@ void  MainWindow::SetManualID(wxCommandEvent& event) {
 }
 
 void MainWindow::ScanID(wxCommandEvent& event) {
-    wxMessageBox(wxT("The scanning feature is not yet implemented"), wxT("Warning"), wxICON_WARNING);
+    m_imagemode = qr;
+    m_capqr = new imageFrame(m_parent, "Scanning the QR code ");
+    m_capqr->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_capqr->OnCamera(event);
+    m_capqr->Show();
 }
 
 void MainWindow::OpenConfiguration(wxCommandEvent& event) {

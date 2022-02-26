@@ -160,6 +160,7 @@
     <ClInclude Include="src\id.h" />
     <ClInclude Include="src\ImageFrame.h" />
     <ClInclude Include="src\MainWindow.h" />
+    <ClInclude Include="src\QRScanner.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TubeTester.h" />
   </ItemGroup>
@@ -173,6 +174,7 @@
     <ClCompile Include="src\easylogging.cpp" />
     <ClCompile Include="src\imageFrame.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
+    <ClCompile Include="src\QRScanner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TubeTester.rc" />

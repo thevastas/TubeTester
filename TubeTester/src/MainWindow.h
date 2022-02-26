@@ -112,7 +112,8 @@ public:
         l1300Video,         //!< Mode for recording the 1300 nm wavelength sensitivity image
         l1500Video,         //!< Mode for recording the 1500 nm wavelength sensitivity image
         l1900Video,         //!< Mode for recording the 1900 nm wavelength sensitivity image
-        luminance           //!< Mode for recording or retrieving the luminance values
+        luminance,          //!< Mode for recording or retrieving the luminance values
+        qr                  //!< Mode for reading the QR code of the tube
     };
 
     ImageMode                     m_imagemode{ Empty };
@@ -135,6 +136,7 @@ public:
     imageFrame* m_cap1300;          //!< imageframe instance (window) for recording of the 1300 nm wavelength sensitivity image
     imageFrame* m_cap1500;          //!< imageframe instance (window) for recording of the 1500 nm wavelength sensitivity image
     imageFrame* m_cap1900;          //!< imageframe instance (window) for recording of the 1900 nm wavelength sensitivity image
+    imageFrame* m_capqr;            //!< imageframe instance (window) for scanning the QR code of the tube
     config* m_configwindow;         //!< config instance (window) for setting the configuration of the application
     advanced* m_advancedwindow;     //!< advanced instance (window) for advanced functionality
 
