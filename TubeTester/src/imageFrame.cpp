@@ -5,6 +5,7 @@ EVT_BUTTON(controls::id::BIMAGECLOSE,			imageFrame::CloseFrame)
 EVT_BUTTON(controls::id::BIMAGESAVE,			imageFrame::QuickSaveSnapshot)
 EVT_BUTTON(controls::id::BMEASUREBLURINESS,		imageFrame::OnCalculateBlurinessFirstZone)
 EVT_BUTTON(controls::id::BMEASUREBLURINESS2,	imageFrame::OnCalculateBlurinessSecondZone)
+EVT_BUTTON(controls::id::BREADQR,				imageFrame::OnScanQR)
 //EVT_BUTTON(controls::id::BSAVEBLURINESS,		imageFrame::OnSaveBluriness)
 EVT_BUTTON(controls::id::BFINDOUTLINE,			imageFrame::OnFindOutline)
 EVT_BUTTON(controls::id::BCALCULATEINTENSITY,	imageFrame::OnCalculateSumIntensity)
@@ -126,7 +127,7 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 	
 
 	if (myParent->m_imagemode == myParent->l1300Video || myParent->m_imagemode == myParent->l1500Video || myParent->m_imagemode == myParent->l1900Video) {
-		m_bcalculateintensity = new wxButton(this, controls::id::BCALCULATEINTENSITY, "Calculate intensity", wxPoint(300, 0), wxSize(300, 60));
+		m_bcalculateintensity = new wxButton(this, controls::id::BCALCULATEINTENSITY, "Calculate intensity", wxPoint(600, 0), wxSize(300, 60));
 		sizerButtons->Add(m_bcalculateintensity, 0, wxEXPAND | wxALL, 5);
 	}
 
@@ -175,8 +176,14 @@ imageFrame::imageFrame(wxPanel* parent, wxString title)
 		break;
 	case myParent->l1900Image:
 		m_directory = myParent->directory1900;
-		SetImage(myParent->l1300file);
+		SetImage(myParent->l1900file);
 		m_bimagesave->Disable();
+		break;
+	case myParent->qr:
+		//system("D:\wget.exe http://192.168.30.159/jpg -O D:\\a.jpg");
+		//SetImage("D:/a.jpg");
+		//SetImage("D:/b.png");
+		//m_bimagesave->Disable();
 		break;
 	case myParent->ResolutionVideo:
 		m_directory = myParent->directoryres;
@@ -308,13 +315,17 @@ void  imageFrame::CloseFrame(wxCommandEvent& event) {
 bool imageFrame::StartCameraCapture()
 {
 	cv::VideoCapture* cap = nullptr;
-
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	Clear();
 
 	{
 		wxWindowDisabler disabler;
 		wxBusyCursor     busyCursor;
-		cap = new cv::VideoCapture(1, cv::CAP_ANY);
+		if (myParent->m_imagemode == myParent->qr) {
+			cap = new cv::VideoCapture(3, cv::CAP_ANY); 
+
+		}
+		else cap = new cv::VideoCapture(1, cv::CAP_ANY);
 
 	}
 
@@ -324,14 +335,25 @@ bool imageFrame::StartCameraCapture()
 		LOG(ERROR) << "Could not connect to the camera.";
 		return false;
 	}
+	if (myParent->m_imagemode == myParent->qr) {
+		m_videoCapture = cap;
+		m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH,640);
+		m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 512);
+		////m_videoCapture->set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
+		////m_videoCapture->set(cv::CAP_PROP_EXPOSURE, -1);
+		//m_videoCapture->set(cv::CAP_PROP_FPS, 30);
+		//m_videoCapture->set(cv::CAP_PROP_GAIN, 5);
+	}
+	else {
+		m_videoCapture = cap;
+		m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH, 2592);
+		m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 1944);
+		m_videoCapture->set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
+		m_videoCapture->set(cv::CAP_PROP_EXPOSURE, -5);
+		m_videoCapture->set(cv::CAP_PROP_FPS, 30);
+		m_videoCapture->set(cv::CAP_PROP_GAIN, 3);
+	}
 
-	m_videoCapture = cap;
-	m_videoCapture->set(cv::CAP_PROP_FRAME_WIDTH, 2592);
-	m_videoCapture->set(cv::CAP_PROP_FRAME_HEIGHT, 1944);
-	m_videoCapture->set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
-	m_videoCapture->set(cv::CAP_PROP_EXPOSURE, -5);
-	m_videoCapture->set(cv::CAP_PROP_FPS, 30);
-	m_videoCapture->set(cv::CAP_PROP_GAIN, 3);
 
 	if (!StartCameraThread())
 
@@ -429,8 +451,16 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 		cv::rectangle(m_ocvmat, cv::Point(1146, 822), cv::Point(1446, 1122), cv::Scalar(0, 0, 255), 5);
 	}
 
-	if (myParent->m_imagemode == myParent->l1300Video || myParent->m_imagemode == myParent->l1500Video || myParent->m_imagemode == myParent->l1900Video) {
+	if (myParent->m_imagemode == myParent->l1300Video || myParent->m_imagemode == myParent->l1500Video) {
+		
+		//cv::circle(m_ocvmat, cv::Point(m_circles[0], m_circles[1]), sumcircleradius, cv::Scalar(0, 0, 255), 3);
 		cv::circle(m_ocvmat, cv::Point(1296, 972), sumcircleradius, cv::Scalar(0, 0, 255), 3);
+	}
+
+	if (myParent->m_imagemode == myParent->l1900Video) {
+
+		//cv::circle(m_ocvmat, cv::Point(m_circles[0], m_circles[1]), sumcircleradius, cv::Scalar(0, 0, 255), 3);
+		cv::circle(m_ocvmat, cv::Point(1296, 972), sumcircleradius_1900, cv::Scalar(0, 0, 255), 3);
 	}
 
 	if (m_imagesaved) {
@@ -441,6 +471,14 @@ void imageFrame::OnCameraFrame(wxThreadEvent& evt)
 			m_imagesaved = false;
 		}
 	};
+
+	if (m_qrfound) {
+		if (framecounter > 10) {
+			framecounter = 0;
+			m_qrfound = false;
+		}
+		//m_ocvmat = displayBox(m_ocvmat, m_bbox);
+	}
 
 	wxBitmap bitmap = ConvertMatToBitmap(m_ocvmat, m_timeConvert);
 
@@ -506,11 +544,13 @@ void imageFrame::OnCalculateSumIntensity(wxCommandEvent& event) {
 
 float imageFrame::calcSumIntensity(const cv::UMat& src, bool measuring_total)
 {
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	float sum;
 	cv::Mat resized;
 	if (!measuring_total) {
 		cv::Mat mask = cv::Mat::zeros(src.size(), CV_8UC1);
 		cv::Mat masked;
+		if (myParent->m_imagemode == myParent->l1900Video) sumcircleradius = sumcircleradius_1900 ;
 		cv::circle(mask, cv::Point(1296, 972), sumcircleradius-5, 255, -1); // subtract 5 from the sum radius to omit the red marking circle
 		
 		src.copyTo(resized, mask);
@@ -586,7 +626,9 @@ void imageFrame::OnCalculateBlurinessFirstZone(wxCommandEvent& event)
 void imageFrame::OnCalculateBlurinessSecondZone(wxCommandEvent& event)
 {
 	calculate_bluriness_second_zone = true;
+	//calculate_bluriness_first_zone = false;
 	m_bluriness2 = calcBlurriness(m_ocvmat, calculate_bluriness_second_zone);
+	//m_bluriness2 = calcBlurriness(m_ocvmat, calculate_bluriness_first_zone);
 }
 
 void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
@@ -609,6 +651,8 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 	switch (myParent->m_imagemode) {
 	case myParent->ResolutionVideo:
 		myParent->m_buttonPanel->m_bretres->Enable();
+		m_bluriness = calcBlurriness(m_ocvmat, true);
+		m_bluriness2 = calcBlurriness(m_ocvmat, false);
 		SaveBluriness();
 		break;
 	case myParent->DefectsVideo:
@@ -616,14 +660,20 @@ void imageFrame::QuickSaveSnapshot(wxCommandEvent& event)
 		break;
 	case myParent->l1300Video:
 		myParent->m_buttonPanel->m_bretlam1300->Enable();
+		m_tsumintensity = calcSumIntensity(m_ocvmat, true);
+		m_csumintensity = calcSumIntensity(m_ocvmat, false);
 		SaveLambda("1300");
 		break;
 	case myParent->l1500Video:
 		myParent->m_buttonPanel->m_bretlam1500->Enable();
+		m_tsumintensity = calcSumIntensity(m_ocvmat, true);
+		m_csumintensity = calcSumIntensity(m_ocvmat, false);
 		SaveLambda("1500");
 		break;
 	case myParent->l1900Video:
 		myParent->m_buttonPanel->m_bretlam1900->Enable();
+		m_tsumintensity = calcSumIntensity(m_ocvmat, true);
+		m_csumintensity = calcSumIntensity(m_ocvmat, false);
 		SaveLambda("1900");
 		break;
 	}
@@ -642,6 +692,65 @@ void imageFrame::OnFindOutline(wxCommandEvent& event) {
 	if(FindCircleCenter(cap_umat)) m_isCircleDrawn = true;
 	else wxMessageBox(wxT("The tube's outline was not found"), wxT("Warning"), wxICON_WARNING);
 }
+
+cv::UMat imageFrame::displayBox(cv::UMat& im, cv::Mat& bbox)
+{
+	int n = bbox.rows;
+	for (int i = 0; i < n; i++)
+	{
+		cv::line(im, cv::Point2i(bbox.at<float>(i, 0), bbox.at<float>(i, 1)), cv::Point2i(bbox.at<float>((i + 1) % n, 0), bbox.at<float>((i + 1) % n, 1)), cv::Scalar(255, 0, 0), 3);
+	}
+	return im;
+}
+
+
+
+void imageFrame::OnScanQR(wxCommandEvent& event) {
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	zbar::ImageScanner scanner;
+	scanner.set_config(zbar::ZBAR_QRCODE, zbar::ZBAR_CFG_ENABLE, 1);
+	cv::Mat gray;
+	std::string data;
+
+	cv::cvtColor(m_ocvmat, gray, cv::COLOR_BGR2GRAY);
+	uchar* raw = (uchar*)gray.data;
+	zbar::Image image(640, 512, "Y800", raw, 640 * 512);
+	int n = scanner.scan(image);
+
+	// extract results
+	for (zbar::Image::SymbolIterator symbol = image.symbol_begin();
+		symbol != image.symbol_end();
+		++symbol) {
+		data = symbol->get_data();
+		//// do something useful with results
+		//cout << "decoded " << symbol->get_type_name()
+		//	<< " symbol \"" << symbol->get_data() << '"' << endl;
+	}
+
+	// 
+	// 
+	//std::string data = qrDecoder.detectAndDecode(m_ocvmat, m_bbox, boxed);
+	//cv::Mat imgqr,imgqro,imgqro2;
+	//m_ocvmat.copyTo(imgqr);
+	//bool detected = false;
+	//detected = qrDecoder.detect(imgqr, imgqro);
+	//std::string data = qrDecoder.decode(imgqr, imgqro2);
+	////std::string data = qrDecoder.detectAndDecodeCurved(m_ocvmat);
+	if (data.length() > 0)
+	{
+		//for (int i = 0; i < m_bbox.size(); i++) {
+		//	cv::Point pt1 = m_bbox[i];
+		//	cv::Point pt2 = m_bbox[(i + 1) % 4];
+		//	line(m_ocvmat, pt1, pt2, cv::Scalar(255, 0, 0), 3);
+		//}
+		myParent->m_buttonPanel->m_idtext->SetLabel(data);
+		myParent->UpdateButtons();
+		//boxed.copyTo(m_ocvmat);
+		m_qrfound = true;
+	}
+	else myParent->m_buttonPanel->m_idtext->SetLabel("Empty ID");
+}
+
 
 void imageFrame::Clear()
 {

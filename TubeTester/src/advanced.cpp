@@ -25,8 +25,8 @@ advanced::advanced(wxPanel* parent, wxString title)
 void advanced::OnFindLambda1300(wxCommandEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	pathlambda1300 = wxFindFirstFile(myParent->directory1300 + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber));
-	pathlambda1300summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumcir.txt"), myParent->batchnumber);
-	pathlambda1300summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumtot.txt"), myParent->batchnumber);
+	pathlambda1300summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_1300sumcir.txt"), myParent->batchnumber);
+	pathlambda1300summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_1300sumtot.txt"), myParent->batchnumber);
 	lambda1300SummaryCircleFile = new wxTextFile(pathlambda1300summaryCircle);
 	lambda1300SummaryTotalFile = new wxTextFile(pathlambda1300summaryTotal);
 	
@@ -80,8 +80,8 @@ void advanced::OnFindLambda1300(wxCommandEvent& event) {
 void advanced::OnFindLambda1500(wxCommandEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	pathlambda1500 = wxFindFirstFile(myParent->directory1500 + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber));
-	pathlambda1500summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumcir.txt"), myParent->batchnumber);
-	pathlambda1500summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumtot.txt"), myParent->batchnumber);
+	pathlambda1500summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_1500sumcir.txt"), myParent->batchnumber);
+	pathlambda1500summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_1500sumtot.txt"), myParent->batchnumber);
 	lambda1500SummaryCircleFile = new wxTextFile(pathlambda1500summaryCircle);
 	lambda1500SummaryTotalFile = new wxTextFile(pathlambda1500summaryTotal);
 
@@ -134,8 +134,8 @@ void advanced::OnFindLambda1500(wxCommandEvent& event) {
 void advanced::OnFindLambda1900(wxCommandEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
 	pathlambda1900 = wxFindFirstFile(myParent->directory1900 + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber));
-	pathlambda1900summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumcir.txt"), myParent->batchnumber);
-	pathlambda1900summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_sumtot.txt"), myParent->batchnumber);
+	pathlambda1900summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_1900sumcir.txt"), myParent->batchnumber);
+	pathlambda1900summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_1900sumtot.txt"), myParent->batchnumber);
 	lambda1900SummaryCircleFile = new wxTextFile(pathlambda1900summaryCircle);
 	lambda1900SummaryTotalFile = new wxTextFile(pathlambda1900summaryTotal);
 

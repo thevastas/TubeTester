@@ -5,6 +5,8 @@
 #include <wx/scrolwin.h>
 #include "convertmattowxbmp.h"
 #include "bmpfromocvpanel.h"
+#include <opencv2/objdetect.hpp>
+#include <zbar.h>
 /** @file ImageFrame.h*/
 
 /*!
@@ -113,6 +115,14 @@ public:
 	/*! Command function to find the outline circle of the tube */
 	void OnFindOutline(wxCommandEvent& event);
 
+	void OnScanQR(wxCommandEvent& event);
+	cv::UMat displayBox(cv::UMat& im, cv::Mat& bbox);
+	bool m_qrfound = false;
+	std::vector<cv::Point> m_bbox;
+	cv::UMat m_qrRectified;
+	cv::QRCodeDetector qrDecoder = cv::QRCodeDetector::QRCodeDetector();
+
+
 	/*! Clears the image and deletes the camera thread */
 	void Clear();
 
@@ -148,6 +158,7 @@ public:
 	wxString m_directory;				//!< General holder for the path of an image, the value to which is given after determining the measurement type
 
 	cv::Mat cap;						//!< Mat Frame that was captured by OpenCV
+	//cv::VideoCapture cap2 = cv::VideoCapture("rtsp://192.168.30.159:8554/mjpeg/1", cv::CAP_FFMPEG);
 	cv::UMat cap_umat;
 	cv::UMat m_ocvmat;					//!< Frame converted to UMat with CV_8UC3 format (8 bit, unsigned, 3 channels)
 
@@ -161,7 +172,8 @@ public:
 	float m_csumintensity;				//!< Intensity sum of pixels within the defined circle of the image, used for sensitivity measurements
 	bool calculate_sum_intensity = false;	//!< Boolean variable for choosing if the intensity of the image should be calculated
 	int framecounter;					//!< Iteration variable to count the number of frames passed
-	int sumcircleradius = 800;			//!< Radius of the circle within which the pixels are supposed to be summed, used for sensitivity measurements
+	int sumcircleradius = 700;			//!< Radius of the circle within which the pixels are supposed to be summed, used for 1300,1500 nm sensitivity measurements
+	int sumcircleradius_1900 = 400;			//!< Radius of the circle within which the pixels are supposed to be summed, used for 1900 nm sensitivity measurements
 
 	cv::Mat m_blurred_image;			//!< Blurred image that is used for the Hough Circle detection
 	cv::Mat m_grayscale_image;			//!< Grayscale image that is used for the Hough Circle detection
