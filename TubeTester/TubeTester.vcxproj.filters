@@ -60,9 +60,6 @@
     <ClInclude Include="src\advanced.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\QRScanner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MainWindow.cpp">
@@ -90,9 +87,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\advanced.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\QRScanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

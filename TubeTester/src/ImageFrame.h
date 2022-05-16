@@ -6,7 +6,6 @@
 #include "convertmattowxbmp.h"
 #include "bmpfromocvpanel.h"
 #include <opencv2/objdetect.hpp>
-#include <zbar.h>
 /** @file ImageFrame.h*/
 
 /*!
@@ -115,12 +114,12 @@ public:
 	/*! Command function to find the outline circle of the tube */
 	void OnFindOutline(wxCommandEvent& event);
 
-	void OnScanQR(wxCommandEvent& event);
-	cv::UMat displayBox(cv::UMat& im, cv::Mat& bbox);
-	bool m_qrfound = false;
-	std::vector<cv::Point> m_bbox;
-	cv::UMat m_qrRectified;
-	cv::QRCodeDetector qrDecoder = cv::QRCodeDetector::QRCodeDetector();
+	//void OnScanQR(wxCommandEvent& event);
+	//cv::UMat displayBox(cv::UMat& im, cv::Mat& bbox);
+	//bool m_qrfound = false;
+	//std::vector<cv::Point> m_bbox;
+	//cv::UMat m_qrRectified;
+	//cv::QRCodeDetector qrDecoder = cv::QRCodeDetector::QRCodeDetector();
 
 
 	/*! Clears the image and deletes the camera thread */

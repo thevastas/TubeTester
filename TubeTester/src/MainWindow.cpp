@@ -113,42 +113,42 @@ void MainWindow::ReadConfig() {
 void MainWindow::OpenResolutionImage(wxCommandEvent& event) {
     m_imagemode = ResolutionImage;
     m_resolutionWindow = new imageFrame(m_parent, "Saved Resolution image: "+ m_buttonPanel->m_idtext->GetLabel());
-    m_resolutionWindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_resolutionWindow->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_resolutionWindow->Show();
 }
 
 void MainWindow::OpenDefectsImage(wxCommandEvent& event) {
     m_imagemode = DefectsImage;
     m_defectsWindow = new imageFrame(m_parent, "Saved Defects image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_defectsWindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_defectsWindow->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_defectsWindow->Show();
 }
 
 void MainWindow::Open1300Image(wxCommandEvent& event) {
     m_imagemode = l1300Image;
     m_1300Window = new imageFrame(m_parent, "Saved 1300 nm image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_1300Window->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_1300Window->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_1300Window->Show();
 }
 
 void MainWindow::Open1500Image(wxCommandEvent& event) {
     m_imagemode = l1500Image;
     m_1500Window = new imageFrame(m_parent, "Saved 1500 nm Image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_1500Window->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_1500Window->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_1500Window->Show();
 }
 
 void MainWindow::Open1900Image(wxCommandEvent& event) {
     m_imagemode = l1900Image;
     m_1900Window = new imageFrame(m_parent, "Saved 1900 nm Image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_1900Window->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_1900Window->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_1900Window->Show();
 }
 
 void MainWindow::CaptureResolutionImage(wxCommandEvent& event) {
     m_imagemode = ResolutionVideo;
     m_capres = new imageFrame(m_parent, "Capturing resolution image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_capres->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_capres->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_capres->OnCamera(event);
     m_capres->Show();
 }
@@ -156,7 +156,7 @@ void MainWindow::CaptureResolutionImage(wxCommandEvent& event) {
 void MainWindow::CaptureDefectsImage(wxCommandEvent& event) {
     m_imagemode = DefectsVideo;
     m_capdef = new imageFrame(m_parent, "Capturing defects image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_capdef->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_capdef->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_capdef->OnCamera(event);
     m_capdef->Show();
 }
@@ -164,7 +164,7 @@ void MainWindow::CaptureDefectsImage(wxCommandEvent& event) {
 void MainWindow::Capture1300Image(wxCommandEvent& event) {
     m_imagemode = l1300Video;
     m_cap1300 = new imageFrame(m_parent, "Capturing 1300 nm image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_cap1300->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_cap1300->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_cap1300->OnCamera(event);
     m_cap1300->Show();
 }
@@ -172,7 +172,7 @@ void MainWindow::Capture1300Image(wxCommandEvent& event) {
 void MainWindow::Capture1500Image(wxCommandEvent& event) {
     m_imagemode = l1500Video;
     m_cap1500 = new imageFrame(m_parent, "Capturing 1500 nm image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_cap1500->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_cap1500->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_cap1500->OnCamera(event);
     m_cap1500->Show();
 }
@@ -180,7 +180,7 @@ void MainWindow::Capture1500Image(wxCommandEvent& event) {
 void MainWindow::Capture1900Image(wxCommandEvent& event) {
     m_imagemode = l1900Video;
     m_cap1900 = new imageFrame(m_parent, "Capturing 1900 nm image: " + m_buttonPanel->m_idtext->GetLabel());
-    m_cap1900->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_cap1900->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_cap1900->OnCamera(event);
     m_cap1900->Show();
 }
@@ -224,23 +224,33 @@ void  MainWindow::SetManualID(wxCommandEvent& event) {
 }
 
 void MainWindow::ScanID(wxCommandEvent& event) {
-    m_imagemode = qr;
-    m_capqr = new imageFrame(m_parent, "Scanning the QR code ");
-    m_capqr->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
-    m_capqr->OnCamera(event);
-    m_capqr->Show();
+
+    wxString pathId = directoryId + "id.txt";
+    wxTextFile* IdFile = new wxTextFile(pathId);
+
+    if (wxFileExists(pathId)) {
+        IdFile->Open();
+        wxString str = IdFile->GetLastLine();
+        m_buttonPanel->m_idtext->SetLabel(str);
+        IdFile->Close();
+    }
+    else {
+        LOG(ERROR) << "Id file not found.";
+        wxMessageBox(wxT("The file does not exist"), wxT("Warning"), wxICON_WARNING);
+    }
+
 }
 
 void MainWindow::OpenConfiguration(wxCommandEvent& event) {
     ReadConfig();
     m_configwindow = new config(m_parent, "Configuration");
-    m_configwindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_configwindow->SetSize(frameoriginx, frameoriginy, framesizex_config, framesizey_config);
     m_configwindow->Show();
 }
 
 void MainWindow::OpenAdvanced(wxCommandEvent& event) {
     m_advancedwindow = new advanced(m_parent, "Advanced functions");
-    m_advancedwindow->SetSize(frameoriginx, frameoriginy, framesizex, framesizey);
+    m_advancedwindow->SetSize(frameoriginx, frameoriginy, framesizex_advanced, framesizey_advanced);
     m_advancedwindow->Show();
 }
 

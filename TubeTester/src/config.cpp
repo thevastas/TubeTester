@@ -39,8 +39,8 @@ config::config(wxPanel* parent, wxString title)
 	m_pathlum =			new wxTextCtrl(this, controls::id::PATHLUM,			myParent->directoryLuminance, wxPoint(0, 0), wxSize(500, 20));
 	m_pathana =			new wxTextCtrl(this, controls::id::PATHANA,			myParent->directoryAnalysis, wxPoint(0, 0), wxSize(500, 20));
 
-	m_scalingfactortext =	new wxStaticText(this, controls::id::SCALINGFACTORTEXT, "Scaling factor, px/mm");
-	m_scalingfactor =		new wxTextCtrl(this, controls::id::SCALINGFACTOR, wxString::Format(wxT("%i"), myParent->scalingFactor), wxPoint(0, 0), wxSize(50, 20));
+	//m_scalingfactortext =	new wxStaticText(this, controls::id::SCALINGFACTORTEXT, "Scaling factor, px/mm");
+	//m_scalingfactor =		new wxTextCtrl(this, controls::id::SCALINGFACTOR, wxString::Format(wxT("%i"), myParent->scalingFactor), wxPoint(0, 0), wxSize(50, 20));
 
 	sizerpaths->Add(m_pathresolutiontext);
 	sizerpaths->Add(m_pathresolution, wxEXPAND | wxLEFT | wxRIGHT, 20);
@@ -58,9 +58,9 @@ config::config(wxPanel* parent, wxString title)
 	sizerpaths->Add(m_pathana, wxEXPAND | wxLEFT | wxRIGHT, 20);
 	sizerpaths->AddSpacer(10);
 
-	sizersettings->Add(m_scalingfactortext);
-	sizersettings->Add(m_scalingfactor);
-	sizersettings->AddSpacer(10);
+	//sizersettings->Add(m_scalingfactortext);
+	//sizersettings->Add(m_scalingfactor);
+	//sizersettings->AddSpacer(10);
 
 	saveclosesizer->Add(m_bconfigsave);
 

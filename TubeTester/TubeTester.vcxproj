@@ -118,13 +118,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV)\include;$(WXWIN)\include\msvc;C:\wxwidgets\lib\vc_x64_lib;$(wxIncSubDir);$(SolutionDir)lib\;$(WXWIN)\include;D:\ZBarWin64-master\ZBarWin64-master\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV)\install\include;$(WXWIN)\include\msvc;$(WXWIN)\lib\vc_x64_lib\mswud;$(wxIncSubDir);$(SolutionDir)lib\;D:\ZBarWin64-master\ZBarWin64-master\include;$(WXWIN)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OPENCV)\x64\vc15\lib;$(WXWIN)\lib\vc_x64_lib;D:\ZBarWin64-master\ZBarWin64-master\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world455d.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;libzbar64-0.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV)\install\x64\vc16\lib;$(WXWIN)\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world455d.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>LinkVerboseLib</ShowProgress>
     </Link>
     <PostBuildEvent>
@@ -161,7 +161,6 @@
     <ClInclude Include="src\id.h" />
     <ClInclude Include="src\ImageFrame.h" />
     <ClInclude Include="src\MainWindow.h" />
-    <ClInclude Include="src\QRScanner.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TubeTester.h" />
   </ItemGroup>
@@ -175,7 +174,6 @@
     <ClCompile Include="src\easylogging.cpp" />
     <ClCompile Include="src\imageFrame.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
-    <ClCompile Include="src\QRScanner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TubeTester.rc" />

@@ -13,11 +13,17 @@ public:
 	void OnFindLambda1300(wxCommandEvent& event); //!< Command function for performing the 1300 nm wavelength analysis
 	void OnFindLambda1500(wxCommandEvent& event); //!< Command function for performing the 1500 nm wavelength analysis
 	void OnFindLambda1900(wxCommandEvent& event); //!< Command function for performing the 1900 nm wavelength analysis
+	void OnFindResolution(wxCommandEvent& event); //!< Command function for performing the resolution analysis
+	void OnFindLuminance(wxCommandEvent& event);  //!< Command function for performing the luminance analysis
 	void Close(wxCloseEvent& event); //!< Close event that is executed upon closing the window
 
-	wxButton* m_blambda1300; //!< Button for the 1300 nm wavelength analysis
-	wxButton* m_blambda1500; //!< Button for the 1500 nm wavelength analysis
-	wxButton* m_blambda1900; //!< Button for the 1900 nm wavelength analysis
+	wxButton* m_blambda1300; //!< Button for the 1300 nm wavelength summary analysis
+	wxButton* m_blambda1500; //!< Button for the 1500 nm wavelength summary analysis
+	wxButton* m_blambda1900; //!< Button for the 1900 nm wavelength summary analysis
+	wxButton* m_bresolution; //!< Button for the resolution summary analysis
+	wxButton* m_bluminance;  //!< Button for the luminance summary analysis
+
+
 
 	wxFileName pathlambda1300; //!< Path holder for finding 1300 nm text files
 	wxFileName pathlambda1500; //!< Path holder for finding 1500 nm text files

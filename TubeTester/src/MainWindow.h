@@ -77,7 +77,7 @@ public:
     /*! Sets the serial number (ID) of the tube manually, using the value that was entered into the user interface */
     void SetManualID(wxCommandEvent& event);
 
-    /*! TODO: automatic scanning of the QR code on the tube to retrieve the serial number */
+    /*! Retrieves the ID from the file saved on the cloud */
     void ScanID(wxCommandEvent& event);
 
     /*! Reads the configuration file and sets the correct paths of image directories */
@@ -120,8 +120,10 @@ public:
 
     int frameoriginx = 1000;    //!< Horizontal starting position of the configuration window
     int frameoriginy = 100;     //!< Vertical starting position of the configuration window
-    int framesizex = 1067;      //!< Starting width of the configuration window
-    int framesizey = 900;       //!< Starting heigth of the configuration window
+    int framesizex_config = 1067;      //!< Starting width of the configuration window
+    int framesizey_config = 900;       //!< Starting heigth of the configuration window
+    int framesizex_advanced = 250;      //!< Starting width of the configuration window
+    int framesizey_advanced = 350;       //!< Starting heigth of the configuration window
 
     wxPanel* m_parent;
     buttonPanel* m_buttonPanel; //!< Panel in which all the buttons of the main window are stored
@@ -150,6 +152,7 @@ public:
     wxString directory1900 = "D:/ADOS-Tech/metrology - Documents/img/1900/"; //!< Default directory for the 1900 nm sensitivity images
     wxString directoryLuminance = "D:/ADOS-Tech/metrology - Documents/img/luminance/"; //!< Default directory for the luminance values
     wxString directoryAnalysis = "D:/ADOS-Tech/metrology - Documents/img/analysis/"; //!< Default directory for the analysis files
+    wxString directoryId = "D:/ADOS-Tech/metrology - Documents/"; //!< Default directory for the analysis files
 
     wxString lumfile;   //!< Full path to the luminance file
     wxString resfile;   //!< Full path to the resolution image file
