@@ -8,6 +8,7 @@ EVT_BUTTON(controls::id::BFINDLAMBDA1500, advanced::OnFindLambda1500)
 EVT_BUTTON(controls::id::BFINDLAMBDA1900, advanced::OnFindLambda1900)
 EVT_BUTTON(controls::id::BFINDRESOLUTION, advanced::OnFindResolution)
 EVT_BUTTON(controls::id::BFINDUMINANCE, advanced::OnFindLuminance)
+//EVT_BUTTON(controls::id::BFINDDEFECTS, advanced::OnFindDefects)
 END_EVENT_TABLE()
 
 advanced::advanced(wxPanel* parent, wxString title)
@@ -20,6 +21,7 @@ advanced::advanced(wxPanel* parent, wxString title)
 	m_blambda1900 = new wxButton(this, controls::id::BFINDLAMBDA1900, "Lambda 1900 summary", wxDefaultPosition, wxSize(200, 60));
 	m_bresolution = new wxButton(this, controls::id::BFINDRESOLUTION, "Resolution summary", wxDefaultPosition, wxSize(200, 60));
 	m_bluminance  = new wxButton(this, controls::id::BFINDUMINANCE, "Luminance summary", wxDefaultPosition, wxSize(200, 60));
+	//m_bluminance = new wxButton(this, controls::id::BFINDDEFECTS, "Defects summary", wxDefaultPosition, wxSize(200, 60));
 	mainsizer->Add(m_blambda1300);
 	mainsizer->Add(m_blambda1500);
 	mainsizer->Add(m_blambda1900);
@@ -50,16 +52,16 @@ void advanced::OnFindLambda1300(wxCommandEvent& event) {
 
 	while (!pathlambda1300.GetFullPath().empty())
 	{
-		lambdaFile = new wxTextFile(pathlambda1300.GetFullPath());
+		inputFile = new wxTextFile(pathlambda1300.GetFullPath());
 		filenamelambda1300 = pathlambda1300.GetFullName();
 
 		if (wxFileExists(pathlambda1300.GetFullPath())) {
-			lambdaFile->Open();
-			arrstr = wxSplit(lambdaFile->GetLastLine(), '=');
+			inputFile->Open();
+			arrstr = wxSplit(inputFile->GetLastLine(), '=');
 			totalval = wxAtoi(arrstr[1]);
-			arrstr = wxSplit(lambdaFile->GetPrevLine(), '=');
+			arrstr = wxSplit(inputFile->GetPrevLine(), '=');
 			circleval = wxAtoi(arrstr[1]);
-			lambdaFile->Close();
+			inputFile->Close();
 			arrstr = wxSplit(filenamelambda1300, '_');
 			fileID = arrstr[0] + "_" + arrstr[1];
 
@@ -105,16 +107,16 @@ void advanced::OnFindLambda1500(wxCommandEvent& event) {
 
 	while (!pathlambda1500.GetFullPath().empty())
 	{
-		lambdaFile = new wxTextFile(pathlambda1500.GetFullPath());
+		inputFile = new wxTextFile(pathlambda1500.GetFullPath());
 		filenamelambda1500 = pathlambda1500.GetFullName();
 
 		if (wxFileExists(pathlambda1500.GetFullPath())) {
-			lambdaFile->Open();
-			arrstr = wxSplit(lambdaFile->GetLastLine(), '=');
+			inputFile->Open();
+			arrstr = wxSplit(inputFile->GetLastLine(), '=');
 			totalval = wxAtoi(arrstr[1]);
-			arrstr = wxSplit(lambdaFile->GetPrevLine(), '=');
+			arrstr = wxSplit(inputFile->GetPrevLine(), '=');
 			circleval = wxAtoi(arrstr[1]);
-			lambdaFile->Close();
+			inputFile->Close();
 			arrstr = wxSplit(filenamelambda1500, '_');
 			fileID = arrstr[0] + "_" + arrstr[1];
 
@@ -159,16 +161,16 @@ void advanced::OnFindLambda1900(wxCommandEvent& event) {
 
 	while (!pathlambda1900.GetFullPath().empty())
 	{
-		lambdaFile = new wxTextFile(pathlambda1900.GetFullPath());
+		inputFile = new wxTextFile(pathlambda1900.GetFullPath());
 		filenamelambda1900 = pathlambda1900.GetFullName();
 
 		if (wxFileExists(pathlambda1900.GetFullPath())) {
-			lambdaFile->Open();
-			arrstr = wxSplit(lambdaFile->GetLastLine(), '=');
+			inputFile->Open();
+			arrstr = wxSplit(inputFile->GetLastLine(), '=');
 			totalval = wxAtoi(arrstr[1]);
-			arrstr = wxSplit(lambdaFile->GetPrevLine(), '=');
+			arrstr = wxSplit(inputFile->GetPrevLine(), '=');
 			circleval = wxAtoi(arrstr[1]);
-			lambdaFile->Close();
+			inputFile->Close();
 			arrstr = wxSplit(filenamelambda1900, '_');
 			fileID = arrstr[0] + "_" + arrstr[1];
 
@@ -193,62 +195,113 @@ void advanced::OnFindLambda1900(wxCommandEvent& event) {
 
 void advanced::OnFindResolution(wxCommandEvent& event) {
 	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
-	pathlambda1300 = wxFindFirstFile(myParent->directory1300 + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber));
-	pathlambda1300summaryCircle = myParent->directoryAnalysis + wxString::Format(wxT("%i_1300sumcir.txt"), myParent->batchnumber);
-	pathlambda1300summaryTotal = myParent->directoryAnalysis + wxString::Format(wxT("%i_1300sumtot.txt"), myParent->batchnumber);
-	lambda1300SummaryCircleFile = new wxTextFile(pathlambda1300summaryCircle);
-	lambda1300SummaryTotalFile = new wxTextFile(pathlambda1300summaryTotal);
+	pathresolution = wxFindFirstFile(myParent->directoryres + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber));
+	pathresolutionsummaryfirst = myParent->directoryAnalysis + wxString::Format(wxT("%i_ressumfirst.txt"), myParent->batchnumber);
+	pathresolutionsummarysecond = myParent->directoryAnalysis + wxString::Format(wxT("%i_ressumsecond.txt"), myParent->batchnumber);
+	resolutionSummaryFirstFile = new wxTextFile(pathresolutionsummaryfirst);
+	resolutionSummarySecondFile = new wxTextFile(pathresolutionsummarysecond);
 
-	if (wxFileExists(pathlambda1300summaryCircle)) {
-		wxRemoveFile(pathlambda1300summaryCircle);
+	if (wxFileExists(pathresolutionsummaryfirst)) {
+		wxRemoveFile(pathresolutionsummaryfirst);
 	}
-	lambda1300SummaryCircleFile->Create();
-	lambda1300SummaryCircleFile->Open();
+	resolutionSummaryFirstFile->Create();
+	resolutionSummaryFirstFile->Open();
 
-	if (wxFileExists(pathlambda1300summaryTotal)) {
-		wxRemoveFile(pathlambda1300summaryTotal);
+	if (wxFileExists(pathresolutionsummarysecond)) {
+		wxRemoveFile(pathresolutionsummarysecond);
 	}
-	lambda1300SummaryTotalFile->Create();
-	lambda1300SummaryTotalFile->Open();
+	resolutionSummarySecondFile->Create();
+	resolutionSummarySecondFile->Open();
 
-	while (!pathlambda1300.GetFullPath().empty())
+	while (!pathresolution.GetFullPath().empty())
 	{
-		lambdaFile = new wxTextFile(pathlambda1300.GetFullPath());
-		filenamelambda1300 = pathlambda1300.GetFullName();
+		inputFile = new wxTextFile(pathresolution.GetFullPath());
+		filenameresolution = pathresolution.GetFullName();
 
-		if (wxFileExists(pathlambda1300.GetFullPath())) {
-			lambdaFile->Open();
-			arrstr = wxSplit(lambdaFile->GetLastLine(), '=');
+		if (wxFileExists(pathresolution.GetFullPath())) {
+			inputFile->Open();
+			arrstr = wxSplit(inputFile->GetLastLine(), '=');
+			firstval = arrstr[1];
 			totalval = wxAtoi(arrstr[1]);
-			arrstr = wxSplit(lambdaFile->GetPrevLine(), '=');
+			arrstr = wxSplit(inputFile->GetPrevLine(), '=');
+			secondval = arrstr[1];
 			circleval = wxAtoi(arrstr[1]);
-			lambdaFile->Close();
-			arrstr = wxSplit(filenamelambda1300, '_');
-			fileID = arrstr[0] + "_" + arrstr[1];
+			inputFile->Close();
 
-			lambda1300SummaryCircleFile->AddLine(fileID + " " + std::to_string(totalval));
-			lambda1300SummaryTotalFile->AddLine(fileID + " " + std::to_string(circleval));
-			lambda1300SummaryCircleFile->Write();
-			lambda1300SummaryTotalFile->Write();
+
+
+			arrstr = wxSplit(filenameresolution, '.');
+			fileID = arrstr[0];
+
+			resolutionSummaryFirstFile->AddLine(fileID + " " + firstval);
+			resolutionSummarySecondFile->AddLine(fileID + " " + secondval);
+
+
+
+
+			resolutionSummaryFirstFile->Write();
+			resolutionSummarySecondFile->Write();
 
 		}
 		else {
-			LOG(ERROR) << "Lambda=1300 file not found.";
-			wxMessageBox(wxT("Files do not exist in the lambda measurement directory"), wxT("Warning"), wxICON_WARNING);
+			LOG(ERROR) << "Resolution file not found.";
+			wxMessageBox(wxT("Files do not exist in the resolution measurement directory"), wxT("Warning"), wxICON_WARNING);
 
 			break;
 		}
-		pathlambda1300 = wxFindNextFile();
+		pathresolution = wxFindNextFile();
 	}
 
-	wxMessageBox(wxT("Summary saved successfully to:\n") + pathlambda1300summaryCircle + "\n" + pathlambda1300summaryTotal, wxT("Warning"), wxICON_WARNING);
-	lambda1300SummaryCircleFile->Close();
-	lambda1300SummaryTotalFile->Close();
+	wxMessageBox(wxT("Summary saved successfully to:\n") + pathresolutionsummaryfirst + "\n" + pathresolutionsummarysecond, wxT("Warning"), wxICON_WARNING);
+	resolutionSummaryFirstFile->Close();
+	resolutionSummarySecondFile->Close();
 }
 
 
+
 void advanced::OnFindLuminance(wxCommandEvent& event) {
-	
+	MainWindow* myParent = (MainWindow*)m_parent->GetParent();
+	pathluminance = wxFindFirstFile(myParent->directoryLuminance + wxString::Format(wxT("%i/*.txt"), myParent->batchnumber));
+	pathluminancesummary = myParent->directoryAnalysis + wxString::Format(wxT("%i_lumsum.txt"), myParent->batchnumber);
+	luminanceSummaryFile = new wxTextFile(pathluminancesummary);
+
+	if (wxFileExists(pathluminancesummary)) {
+		wxRemoveFile(pathluminancesummary);
+	}
+	luminanceSummaryFile->Create();
+	luminanceSummaryFile->Open();
+
+	while (!pathluminance.GetFullPath().empty())
+	{
+		inputFile = new wxTextFile(pathluminance.GetFullPath());
+		filenameluminance = pathluminance.GetFullName();
+
+		if (wxFileExists(pathluminance.GetFullPath())) {
+			inputFile->Open();
+			arrstr = wxSplit(inputFile->GetLastLine(), '=');
+			firstval = arrstr[1];
+			inputFile->Close();
+
+
+
+			arrstr = wxSplit(filenameluminance, '.');
+			fileID = arrstr[0];
+
+			luminanceSummaryFile->AddLine(fileID + " " + firstval);
+			luminanceSummaryFile->Write();
+
+		}
+		else {
+			LOG(ERROR) << "Luminance file not found.";
+			wxMessageBox(wxT("Files do not exist in the luminance measurement directory"), wxT("Warning"), wxICON_WARNING);
+
+			break;
+		}
+		pathluminance = wxFindNextFile();
+	}
+
+	wxMessageBox(wxT("Summary saved successfully to:\n") + pathluminancesummary, wxT("Warning"), wxICON_WARNING);
+	luminanceSummaryFile->Close();
 }
 
 
